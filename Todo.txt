@@ -1,0 +1,14 @@
+**Things to do:**
+
+
+
+- what files are needed for L-system?
+
+- what files are needed for procedural creation?
+
+
+- Change ingoing geometry
+- adjust gUI to match
+
+
+- Lighting situation (one 'sun'?)
