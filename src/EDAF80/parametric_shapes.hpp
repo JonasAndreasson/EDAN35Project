@@ -46,6 +46,28 @@ namespace parametric_shapes
 	                               unsigned int const longitude_split_count,
 	                               unsigned int const latitude_split_count);
 
+	//! \brief Create a cylinder for a given tesselation level and make it
+	//!        available to OpenGL.
+	//!
+	//! @param radius radius of the cylinder
+	//! @param height the height of the cylinder
+	//! @param longitude_split_count the number of times the longitude
+	//!                              angle should be split: 0 means each
+	//!                              longitudinal line consist of a single
+	//!                              edge spanning the full 360°, with 1
+	//!                              you get two edges (each spanning
+	//!                              180°); 2 is the minimum for getting a
+	//!                              3-D shape.
+	//! @param vertical_split_count the number of times vertical edges
+	//!                             should be split: 0 means each vertical
+	//!                             line consist of a single edge, 1 gives
+	//!                             you two edges, and so on.
+	//! @return wrapper around OpenGL objects' name containing the geometry
+	//!         data
+	bonobo::mesh_data createCylinder(float const radius, float const height,
+		unsigned int const longitude_split_count,
+		unsigned int const vertical_split_count);
+
 	//! \brief Create a torus for a given tesselation level and make it
 	//!        available to OpenGL.
 	//!
