@@ -586,6 +586,7 @@ parametric_shapes::createCylinder(float const radius, float const height,
 	float theta = 0.0f;
 	float h = -height / 2;
 	for (unsigned int i = 0u; i < circle_slice_vertices_count; ++i) {
+		float h = -height / 2;
 		float const cos_theta = std::cos(theta);
 		float const sin_theta = std::sin(theta);
 		for (unsigned int j = 0u; j < vertical_slice_vertices_count; ++j) {
