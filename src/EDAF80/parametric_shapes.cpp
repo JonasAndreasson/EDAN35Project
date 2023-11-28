@@ -597,7 +597,7 @@ parametric_shapes::createCylinder(float const radius, float const height,
 		float r = radius;
 		for (unsigned int j = 0u; j < vertical_slice_vertices_count; ++j) {
 //
-			if( theta == 0.0f || theta == final_theta){
+			if( i == 0u || i == circle_slice_vertices_count-1){
 				rand1 = 0;
 				rand2 = 0;
 			}
