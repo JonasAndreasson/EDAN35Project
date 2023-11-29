@@ -4,6 +4,9 @@
 //Inspired by https://github.com/AidanMM/AMM-3DEngine/tree/master, https://www.csh.rit.edu/~aidan/portfolio/3DLSystems.shtml
 
 
+//Iterator used to step through map. Our iterator is called 'ruleIter'
+typedef std::map<char, std::string>::iterator ruleIter;
+
 LSystem::LSystem()
 {
 }
@@ -33,9 +36,23 @@ std::string LSystem::ApplyAxioms(std::string system)
 
 	for (int j = 0; j < system.length(), j++) { //run rules for each item from the input.
 
+		bool noRule = true; // Used to see if we find a matching rule.
 
+		// Use a custom iterator - defined at the top of file - to find fitting rule
+		// The iterator goes over map pairs.(first is key, second is value)
+		for (ruleIter rule = axioms.begin(); rule != axioms.end(); ++rule) { // map.end() happens if the key isn't in the map.
+
+			if (system[j] == rule->first) { //Compare input item to each key 
+
+				noRule = false;
+				newSystem += rule->second; //Put the rule value in place of input variabel.
+				break;
+			}
+		}
+		if (noRule) { //Looped over entire map, no rule found var -> var
+			newSystem += system[c]; //keep same variable in its place.
+		}
 	}
-
 	return newSystem;
 }
 
