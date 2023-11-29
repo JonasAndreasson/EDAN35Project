@@ -562,7 +562,7 @@ parametric_shapes::createCircleRing(float const radius,
 
 
 bonobo::mesh_data
-parametric_shapes::createCylinder(float const radius, float const height,
+parametric_shapes::createBranch(float const radius, float const height,
 	unsigned int const longitude_split_count,
 	unsigned int const vertical_split_count)
 {

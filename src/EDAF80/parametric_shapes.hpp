@@ -64,7 +64,7 @@ namespace parametric_shapes
 	//!                             you two edges, and so on.
 	//! @return wrapper around OpenGL objects' name containing the geometry
 	//!         data
-	bonobo::mesh_data createCylinder(float const radius, float const height,
+	bonobo::mesh_data createBranch(float const radius, float const height,
 		unsigned int const longitude_split_count,
 		unsigned int const vertical_split_count);
 
