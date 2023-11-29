@@ -12,7 +12,7 @@ Tree::Tree(bonobo::mesh_data const& shape,
 
 
 
-{	//Generate Tree using L-system (generator class?)
+{	//Generate Tree using L-system -> generator
 
 	_body.node.set_geometry(shape);
 	_body.node.add_texture("diffuse_texture", diffuse_texture_id, GL_TEXTURE_2D);
@@ -51,15 +51,6 @@ glm::mat4 Tree::render(std::chrono::microseconds elapsed_time,
 	return transformed;
 }
 
-void Tree::add_child(Tree* child)
-{
-	_children.push_back(child);
-}
-
-std::vector<Tree*> const& Tree::get_children() const
-{
-	return _children;
-}
 
 void Tree::set_scale(glm::vec3 const& scale)
 {
