@@ -1,14 +1,14 @@
 add_executable (EDAN35_Project)
 
 target_sources (
-	EDAN35_Assignment2
+	EDAN35_Project
 	PRIVATE
-		[[assignment2.hpp]]
-		[[assignment2.cpp]]
+		[[project_main.hpp]]
+		[[project_main.cpp]]
 )
 
-target_link_libraries (EDAN35_Assignment2 PRIVATE assignment_setup)
+target_link_libraries (EDAN35_Project PRIVATE assignment_setup parametric_shapes)
 
-install (TARGETS EDAN35_Assignment2 DESTINATION bin)
+install (TARGETS EDAN35_Project DESTINATION bin)
 
-copy_dlls (EDAN35_Assignment2 "${CMAKE_CURRENT_BINARY_DIR}")
+copy_dlls (EDAN35_Project "${CMAKE_CURRENT_BINARY_DIR}")
