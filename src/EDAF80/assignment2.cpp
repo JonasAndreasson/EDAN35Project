@@ -48,7 +48,7 @@ edaf80::Assignment2::run()
 	//auto const shape = parametric_shapes::createQuad(0.25f, 0.15f);
 	//auto const shape = parametric_shapes::createSphere(0.15f, 10u, 10u);
 	//auto const shape = parametric_shapes::createTorus(0.3f,0.15f, 100u, 100u);
-	auto const shape = parametric_shapes::createCylinder(0.05f,0.3f, 10u, 4u);
+	auto const shape = parametric_shapes::createBranch(0.05f,0.3f, 10u, 4u);
 	if (shape.vao == 0u)
 		return;
 

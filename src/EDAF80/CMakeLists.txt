@@ -20,8 +20,7 @@ target_sources (
 	PRIVATE
 		[[assignment1.cpp]]
 		[[CelestialBody.cpp]]
-		[[CelestialBody.hpp]]
-  "Tree.cpp" "Tree.hpp")
+		[[CelestialBody.hpp]])
 target_link_libraries (
 	EDAF80_Assignment1
 	PRIVATE assignment_setup parametric_shapes
@@ -35,8 +34,7 @@ target_sources (
 	EDAF80_Assignment2
 	PRIVATE
 		[[assignment2.hpp]]
-		[[assignment2.cpp]]
-  "Tree.cpp" "Tree.hpp")
+		[[assignment2.cpp]])
 target_link_libraries (
 	EDAF80_Assignment2
 	PRIVATE assignment_setup interpolation parametric_shapes
@@ -50,8 +48,7 @@ target_sources (
 	EDAF80_Assignment3
 	PRIVATE
 		[[assignment3.hpp]]
-		[[assignment3.cpp]]
-  "Tree.cpp" "Tree.hpp")
+		[[assignment3.cpp]])
 target_link_libraries (
 	EDAF80_Assignment3
 	PRIVATE assignment_setup parametric_shapes
@@ -65,8 +62,7 @@ target_sources (
 	EDAF80_Assignment4
 	PRIVATE
 		[[assignment4.hpp]]
-		[[assignment4.cpp]]
-  "Tree.cpp" "Tree.hpp")
+		[[assignment4.cpp]])
 target_link_libraries (
 	EDAF80_Assignment4
 	PRIVATE assignment_setup parametric_shapes
@@ -80,8 +76,7 @@ target_sources (
 	EDAF80_Assignment5
 	PRIVATE
 		[[assignment5.hpp]]
-		[[assignment5.cpp]]
-  "Tree.cpp" "Tree.hpp")
+		[[assignment5.cpp]])
 target_link_libraries (EDAF80_Assignment5 PRIVATE assignment_setup parametric_shapes)
 copy_dlls (EDAF80_Assignment5 "${CMAKE_CURRENT_BINARY_DIR}")
 
