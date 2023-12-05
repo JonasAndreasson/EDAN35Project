@@ -163,11 +163,11 @@ project::ProjectMain::run()
 
 	auto circle_rings = Node();
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
-	Tree tree = Tree(&fallback_shader, set_uniforms);
+	Tree tree = Tree(&texcoord_shader, set_uniforms);
 	circle_rings.set_geometry(shape);
-	circle_rings.set_program(&fallback_shader, set_uniforms);
+	circle_rings.set_program(&texcoord_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
-	second_branch.set_program(&fallback_shader, set_uniforms);
+	second_branch.set_program(&texcoord_shader, set_uniforms);
 	
 	//! \todo Create a tesselated sphere and a tesselated torus
 
