@@ -19,6 +19,7 @@
 #include <clocale>
 #include <cstdlib>
 #include <stdexcept>
+#include "L-system_Tree/Tree.hpp"
 
 project::ProjectMain::ProjectMain(WindowManager& windowManager) :
 	mCamera(0.5f * glm::half_pi<float>(),
@@ -86,6 +87,7 @@ project::ProjectMain::run()
 	mCamera.mMouseSensitivity = glm::vec2(0.003f);
 	mCamera.mMovementSpeed = glm::vec3(3.0f); // 3 m/s => 10.8 km/h
 
+	
 	// Create the shader programs
 	ShaderProgramManager program_manager;
 	GLuint fallback_shader = 0u;
@@ -161,6 +163,7 @@ project::ProjectMain::run()
 
 	auto circle_rings = Node();
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0));
+	Tree tree = Tree(&fallback_shader, set_uniforms);
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&fallback_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
@@ -233,6 +236,8 @@ project::ProjectMain::run()
 
 		//circle_rings.render(mCamera.GetWorldToClipMatrix());
 		second_branch.render(mCamera.GetWorldToClipMatrix());
+		tree.render(mCamera.GetWorldToClipMatrix());
+		tree.get_child(0)->render(mCamera.GetWorldToClipMatrix());
 
 
 		

@@ -11,10 +11,7 @@ class Tree : public Node
 {
 
 private:
-	struct Tree
-	{
-		//spara alla grenar på något sätt. tänker varje gren kan ha flera barn??
-	};
+
 
 
 public:
@@ -25,28 +22,7 @@ public:
 	//! @param [in] program Shader program used to render the tree (more details about it in assignment~3)
 	//! @param [in] diffuse_texture_id Identifier of the diffuse texture
 	//!             used (more details about it also in assignment~3)
-	Tree();
-
-	//! \brief Render this tree.
-	//!
-	//! @param [in] elapsed_time Amount of time (in microseconds) between
-	//!             two frames
-	//! @param [in] view_projection Matrix transforming from world space to
-	//!             clip space
-	//! @param [in] parent_transform Matrix transforming from the parent’s
-	//!             local space to world space
-	//! @param [in] show_basis Show a 3D basis transformed by the world matrix
-	//!             of this tree
-	//! @return Matrix transforming from this tree’s local space
-	//!         to world space
-	glm::mat4 render(std::chrono::microseconds elapsed_time,
-		glm::mat4 const& view_projection,
-		glm::mat4 const& parent_transform = glm::mat4(1.0f),
-		bool show_basis = false);
-
-
-
-
+	Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniforms = [](GLuint) {});
 
 	//! \brief Configure the scale of this tree. ??
 

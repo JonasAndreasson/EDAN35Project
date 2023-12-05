@@ -1,30 +1,39 @@
 #include "Tree.hpp"
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/trigonometric.hpp>
-#include <stack>
-#include "core/helpers.hpp"
-#include "core/Log.h"
-
-
-Tree::Tree()
-
-
+#include "Branch.hpp"
+#include "core/node.hpp"
+#include <string.h>
+#include <stdio.h>
+Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniforms) :Node()
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
-	std::string s = "";
-	for (char c : s) {
+	std::string s = "F";
+	float angle = 0;
+	float height = 5;
+	float radius = 5;
+	glm::vec3 position = glm::vec3(0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
+	Branch *b = nullptr;
+	for (auto c : s) {
 		switch (c) {
-		case "F":
+		case 'F':
+			//make branch
+			b = new Branch(radius, height, position, angle, rotation);
+			std::cout << "Added branch" << '\n';
+			b->set_program(program, set_uniforms);
+			add_child(b);
 			break;
-		case "-":
+		case '-':
+			//change the angle
 			break;
-		case "+":
+		case '+':
+			//change the angle
 			break;
-		case "[":
+		case '[':
+			//push current to stack
 				break;
-		case "]":
+		case ']':
+			//pop from stack
 				continue;
 		default:
 			break;
@@ -33,7 +42,7 @@ Tree::Tree()
 	}
 }
 
-
 glm::vec3 Tree::get_pos() {
-	return glm::vec3((transformed * glm::vec4(0.0f,0.0f,0.0f,1.0f)));
+	//return glm::vec3((transformed * glm::vec4(0.0f,0.0f,0.0f,1.0f)));
+	return glm::vec3(0.0f);
 }
