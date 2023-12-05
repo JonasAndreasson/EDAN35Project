@@ -169,7 +169,7 @@ project::ProjectMain::run()
 	second_branch.set_program(&fallback_shader, set_uniforms);
 	second_branch.get_transform().RotateZ(glm::pi<float>() / 6);
 
-
+	std::cout << second_branch.get_transform().GetRotation();
 	//! \todo Create a tesselated sphere and a tesselated torus
 
 

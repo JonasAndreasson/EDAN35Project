@@ -23,7 +23,7 @@ void LSystem::AddAxiom(std::string key, std::string rule)
 
 void LSystem::ClearAxioms()
 {
-	axioms.clear()
+	axioms.clear();
 }
 
 //if no rule exists for a variable then the rule is " var -> var "
@@ -34,7 +34,7 @@ std::string LSystem::ApplyAxioms(std::string system)
 {
 	std::string newSystem = ""; //Create an empty string.
 
-	for (int j = 0; j < system.length(), j++) { //run rules for each item from the input.
+	for (int j = 0; j < system.length(); j++) { //run rules for each item from the input.
 
 		bool noRule = true; // Used to see if we find a matching rule.
 
@@ -42,7 +42,7 @@ std::string LSystem::ApplyAxioms(std::string system)
 		// The iterator goes over map pairs.(first is key, second is value)
 		for (ruleIter rule = axioms.begin(); rule != axioms.end(); ++rule) { // map.end() happens if the key isn't in the map.
 
-			if (system[j] == rule->first) { //Compare input item to each key 
+			if (false) { //(system[j] == rule->first) { //Compare input item to each key NOTE: char == string doesn't work
 
 				noRule = false;
 				newSystem += rule->second; //Put the rule value in place of input variabel.
@@ -50,7 +50,7 @@ std::string LSystem::ApplyAxioms(std::string system)
 			}
 		}
 		if (noRule) { //Looped over entire map, no rule found var -> var
-			newSystem += system[c]; //keep same variable in its place.
+			newSystem += system[j]; //keep same variable in its place.
 		}
 	}
 	return newSystem;
