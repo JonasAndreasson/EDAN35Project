@@ -6,12 +6,31 @@
 #include "core/helpers.hpp"
 #include "core/Log.h"
 
+
 Tree::Tree()
 
 
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
+	std::string s = "";
+	for (char c : s) {
+		switch (c) {
+		case "F":
+			break;
+		case "-":
+			break;
+		case "+":
+			break;
+		case "[":
+				break;
+		case "]":
+				continue;
+		default:
+			break;
+
+		}
+	}
 }
 
 glm::mat4 Tree::render(std::chrono::microseconds elapsed_time,
