@@ -562,7 +562,7 @@ parametric_shapes::createCircleRing(float const radius,
 
 
 bonobo::mesh_data
-parametric_shapes::createBranch(float const radius, float const height,
+parametric_shapes::createBranch(float const radius, float const height, float const prop_loss,
 	unsigned int const longitude_split_count,
 	unsigned int const vertical_split_count)
 {
@@ -582,7 +582,7 @@ parametric_shapes::createBranch(float const radius, float const height,
 	float const d_theta = glm::two_pi<float>() / (static_cast<float>(circle_slice_edges_count));
 	float final_theta = d_theta * (static_cast<float>(circle_slice_edges_count));
 	float height_delta = height / vertical_split_count;
-	float radius_delta = radius * 0.5 / vertical_split_count; //radius loss over each vertical step
+	float radius_delta = radius * prop_loss / vertical_split_count; //radius loss over each vertical step
 	// generate vertices iteratively
 	srand(time(NULL));
 	size_t index = 0u;
