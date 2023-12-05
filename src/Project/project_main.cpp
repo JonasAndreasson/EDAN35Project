@@ -76,7 +76,8 @@ project::ProjectMain::run()
 	//auto const shape = parametric_shapes::createQuad(0.25f, 0.15f);
 	//auto const shape = parametric_shapes::createSphere(0.15f, 10u, 10u);
 	//auto const shape = parametric_shapes::createTorus(0.3f,0.15f, 100u, 100u);
-	auto const shape = parametric_shapes::createBranch(0.05f, 0.3f, 0.5f, 10u, 4u);
+	auto const shape = parametric_shapes::createBranch(0.05f, 0.3f);
+	auto const branch2 = parametric_shapes::createBranch(0.025f, 0.15f);
 	if (shape.vao == 0u)
 		return;
 
@@ -159,9 +160,14 @@ project::ProjectMain::run()
 	bool show_control_points = true;
 
 	auto circle_rings = Node();
+	auto second_branch = Node();
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&fallback_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
+
+	second_branch.set_geometry(branch2);
+	second_branch.set_program(&fallback_shader, set_uniforms);
+	second_branch.get_transform().RotateZ(glm::pi<float>() / 6);
 
 
 	//! \todo Create a tesselated sphere and a tesselated torus
@@ -172,25 +178,6 @@ project::ProjectMain::run()
 	glEnable(GL_DEPTH_TEST);
 
 
-	auto const control_point_sphere = parametric_shapes::createSphere(0.1f, 10u, 10u);
-	std::array<glm::vec3, 9> control_point_locations = {
-		glm::vec3( 0.0f,  0.0f,  0.0f),
-		glm::vec3( 1.0f,  1.8f,  1.0f),
-		glm::vec3( 2.0f,  1.2f,  2.0f),
-		glm::vec3( 3.0f,  3.0f,  3.0f),
-		glm::vec3( 3.0f,  0.0f,  3.0f),
-		glm::vec3(-2.0f, -1.0f,  3.0f),
-		glm::vec3(-3.0f, -3.0f, -3.0f),
-		glm::vec3(-2.0f, -1.2f, -2.0f),
-		glm::vec3(-1.0f, -1.8f, -1.0f)
-	};
-	std::array<Node, control_point_locations.size()> control_points;
-	/*for (std::size_t i = 0; i < control_point_locations.size(); ++i) {
-		auto& control_point = control_points[i];
-		control_point.set_geometry(control_point_sphere);
-		control_point.set_program(&diffuse_shader, set_uniforms);
-		control_point.get_transform().SetTranslate(control_point_locations[i]);
-	}*/
 
 
 	auto lastTime = std::chrono::high_resolution_clock::now();
@@ -206,10 +193,6 @@ project::ProjectMain::run()
 	float basis_length_scale = 1.0f;
 	float* res = new float(0);
 	float last_second = 0;
-	auto previous_index = control_point_locations.size()-1;
-	auto current_index = 0u;
-	auto next_index = 1u;
-	auto next_next_index = 2u;
 	changeCullMode(cull_mode);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -251,54 +234,10 @@ project::ProjectMain::run()
 		bonobo::changePolygonMode(polygon_mode);
 
 
-		//if (interpolate) {
-		 if (false) {
-			//! \todo Interpolate the movement of a shape between various
-			//!        control points.
-			//!
-			auto d_time = std::modff(elapsed_time_s,res);
-			if (*res > last_second) {
-				++current_index;
-				++next_index;
-				++next_next_index;
-				++previous_index;
-				last_second = *res;
-				if (current_index >= control_point_locations.size()) {
-					current_index = 0;
-				}
-				if (next_index >= control_point_locations.size()) {
-					next_index = 0;
-				}
-				if (next_next_index >= control_point_locations.size()) {
-					next_next_index = 0;
-				}
-				if (previous_index >= control_point_locations.size()) {
-					previous_index = 0;
-				}
-			}
-			if (use_linear) {
-				//! \todo Compute the interpolated position
-				//!       using the linear interpolation.
-				//! 
-				//auto newpos = interpolation::evalLERP(control_point_locations[current_index], control_point_locations[next_index],d_time);
-				//circle_rings.get_transform().SetTranslate(newpos);
-			}
-			else {
-				//! \todo Compute the interpolated position
-				//!       using the Catmull-Rom interpolation;
-				//!       use the `catmull_rom_tension`
-				//!       variable as your tension argument.
-				//auto newpos = interpolation::evalCatmullRom(control_point_locations[previous_index], control_point_locations[current_index], control_point_locations[next_index], control_point_locations[next_next_index],catmull_rom_tension,d_time);
-				//circle_rings.get_transform().SetTranslate(newpos);
-			}
-		}
 
 		circle_rings.render(mCamera.GetWorldToClipMatrix());
-		if (show_control_points) {
-			for (auto const& control_point : control_points) {
-				control_point.render(mCamera.GetWorldToClipMatrix());
-			}
-		}
+		second_branch.render(mCamera.GetWorldToClipMatrix());
+
 
 		
 
@@ -313,6 +252,7 @@ project::ProjectMain::run()
 			auto selection_result = program_manager.SelectProgram("Shader", program_index);
 			if (selection_result.was_selection_changed) {
 				circle_rings.set_program(selection_result.program, set_uniforms);
+				second_branch.set_program(selection_result.program, set_uniforms);
 			}
 			ImGui::Separator();
 			ImGui::Checkbox("Show control points", &show_control_points);

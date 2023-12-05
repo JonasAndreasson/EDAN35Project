@@ -610,8 +610,8 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 
 			vertices[index] = glm::vec3(
 				(r + rand1) * cos_theta , //TODO: indroduce some randomization - at most *radius
-				(r + rand2) * sin_theta ,
-				h);
+				 h,
+				(r + rand2) * sin_theta);
 
 			// texture coordinates
 			texcoords[index] = glm::vec3(
@@ -622,15 +622,15 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 			// tangent
 			auto const t = glm::vec3(
 				-(r + rand1) * sin_theta,
-				(r + rand2) * cos_theta,
-				0);
+				0,
+				(r + rand2) * cos_theta);
 			tangents[index] = t;
 
 			// binormal
 			auto const b = glm::vec3(
 				0,
-				0,
-				1);
+				1,
+				0);
 			binormals[index] = b;
 
 			// normal
