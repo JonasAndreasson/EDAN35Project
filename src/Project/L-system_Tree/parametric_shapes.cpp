@@ -587,11 +587,11 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 	srand(time(NULL));
 	size_t index = 0u;
 	float theta = 0.0f;
-	float h = -height / 2;
+	float h = 0;
 	float rand1 = 0;
 	float rand2 = 0;
 	for (unsigned int i = 0u; i < circle_slice_vertices_count; ++i) {
-		float h = -height / 2;
+		float h = 0;
 		float const cos_theta = std::cos(theta);
 		float const sin_theta = std::sin(theta);
 		float r = radius;
