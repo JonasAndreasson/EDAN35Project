@@ -628,9 +628,9 @@ parametric_shapes::createBranch(float const radius, float const height,
 
 			// binormal
 			auto const b = glm::vec3(
-				cos_theta,
-				sin_theta,
-				0);
+				0,
+				0,
+				1);
 			binormals[index] = b;
 
 			// normal

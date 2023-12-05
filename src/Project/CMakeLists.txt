@@ -7,7 +7,9 @@ target_sources (
 		[[project_main.cpp]]
 )
 
-target_link_libraries (EDAN35_Project PRIVATE assignment_setup parametric_shapes)
+target_link_libraries (EDAN35_Project PRIVATE assignment_setup parametric_tree)
+
+add_subdirectory ("${CMAKE_SOURCE_DIR}/src/Project/L-system_Tree")
 
 install (TARGETS EDAN35_Project DESTINATION bin)
 
