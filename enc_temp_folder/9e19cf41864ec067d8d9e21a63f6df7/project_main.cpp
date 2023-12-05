@@ -1,7 +1,6 @@
 #include "project_main.hpp"
 
 #include "L-system_Tree/parametric_shapes.hpp"
-#include "L-system_Tree/LSystem.hpp"
 
 #include "config.hpp"
 #include "core/Bonobo.h"
@@ -44,33 +43,6 @@ project::ProjectMain::~ProjectMain()
 void
 project::ProjectMain::run()
 {
-
-	//Create L-system
-	/*
-	* Using ´Fifo Stack.
-			"-" : turn left 45°
-			"+" : turn right 45°.
-			"F" : draw branch
-			"X" : Dummy command - do nothing, used for organic generation
-			"[" : push position
-			"]" : pop position
-	*/
-
-	LSystem fractalSys;
-	fractalSys.AddAxiom("F", "F[-F][+F]");
-	
-
-	LSystem treeSys1;
-	treeSys1.AddAxiom("F", "FF");
-	treeSys1.AddAxiom("X", "F+[-F-XF-X][+FF][--XF[+X]][++F-X]");
-
-
-	LSystem treeSys2;
-	treeSys1.AddAxiom("F", "FF");
-	treeSys1.AddAxiom("X", "-F[+F][---X]+F-F[++++X]-X");
-
-
-
 	// Load the sphere geometry
 	//auto const shape = parametric_shapes::createCircleRing(2.0f, 0.75f, 40u, 4u);
 	//auto const shape = parametric_shapes::createQuad(0.25f, 0.15f);
@@ -300,8 +272,6 @@ project::ProjectMain::run()
 			}
 		}
 
-		
-
 		bool const opened = ImGui::Begin("Scene Controls", nullptr, ImGuiWindowFlags_None);
 		if (opened) {
 			auto const cull_mode_changed = bonobo::uiSelectCullMode("Cull mode", cull_mode);
@@ -309,7 +279,6 @@ project::ProjectMain::run()
 				changeCullMode(cull_mode);
 			}
 			bonobo::uiSelectPolygonMode("Polygon mode", polygon_mode);
-
 			auto selection_result = program_manager.SelectProgram("Shader", program_index);
 			if (selection_result.was_selection_changed) {
 				circle_rings.set_program(selection_result.program, set_uniforms);

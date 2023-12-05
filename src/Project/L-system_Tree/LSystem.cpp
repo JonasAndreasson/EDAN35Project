@@ -5,7 +5,7 @@
 
 
 //Iterator used to step through map. Our iterator is called 'ruleIter'
-typedef std::map<char, std::string>::iterator ruleIter;
+typedef std::map<std::string, std::string>::iterator ruleIter;
 
 LSystem::LSystem()
 {
@@ -15,7 +15,7 @@ LSystem::LSystem()
 
 //!< Add variable and its production rule to the axioms parameter.
 //! Production rules are defined by  key -> rule
-void LSystem::AddAxiom(char key, std::string rule)
+void LSystem::AddAxiom(std::string key, std::string rule)
 {
 	axioms[key] = rule;
 }
