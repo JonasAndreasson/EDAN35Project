@@ -162,7 +162,7 @@ project::ProjectMain::run()
 	bool show_control_points = true;
 
 	auto circle_rings = Node();
-	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0));
+	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
 	Tree tree = Tree(&fallback_shader, set_uniforms);
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&fallback_shader, set_uniforms);
@@ -237,7 +237,8 @@ project::ProjectMain::run()
 		//circle_rings.render(mCamera.GetWorldToClipMatrix());
 		second_branch.render(mCamera.GetWorldToClipMatrix());
 		tree.render(mCamera.GetWorldToClipMatrix());
-		tree.get_child(0)->render(mCamera.GetWorldToClipMatrix());
+		for (size_t i = 0; i<tree.get_children_nb(); i+=1)
+			tree.get_child(i)->render(mCamera.GetWorldToClipMatrix());
 
 
 		

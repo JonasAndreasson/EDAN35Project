@@ -17,6 +17,8 @@ private:
 
 public:
 
-	Branch(float, float, glm::vec3, float, glm::vec3);
+	Branch(float, float, glm::vec3, float, glm::vec3, float);
+	const glm::vec3 get_start() { return start_pos; }
+	const glm::vec3 get_end() { return end_pos;  }
 
 };
