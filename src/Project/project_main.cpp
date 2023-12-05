@@ -2,7 +2,7 @@
 
 #include "L-system_Tree/parametric_shapes.hpp"
 #include "L-system_Tree/LSystem.hpp"
-
+#include "L-system_Tree/Branch.hpp"
 #include "config.hpp"
 #include "core/Bonobo.h"
 #include "core/FPSCamera.h"
@@ -160,16 +160,12 @@ project::ProjectMain::run()
 	bool show_control_points = true;
 
 	auto circle_rings = Node();
-	auto second_branch = Node();
+	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0));
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&fallback_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
-
-	second_branch.set_geometry(branch2);
 	second_branch.set_program(&fallback_shader, set_uniforms);
-	second_branch.get_transform().RotateZ(glm::pi<float>() / 6);
-
-	std::cout << second_branch.get_transform().GetRotation();
+	
 	//! \todo Create a tesselated sphere and a tesselated torus
 
 
@@ -235,7 +231,7 @@ project::ProjectMain::run()
 
 
 
-		circle_rings.render(mCamera.GetWorldToClipMatrix());
+		//circle_rings.render(mCamera.GetWorldToClipMatrix());
 		second_branch.render(mCamera.GetWorldToClipMatrix());
 
 

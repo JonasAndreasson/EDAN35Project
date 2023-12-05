@@ -11,3 +11,10 @@ target_sources (
        PUBLIC [[LSystem.hpp]]
        PRIVATE [[LSystem.cpp]])
 target_link_libraries (LSystem PRIVATE bonobo CG_Labs_options)
+
+add_library (Branch STATIC)
+target_sources (
+       Branch
+       PUBLIC [[Branch.hpp]]
+       PRIVATE [[Branch.cpp]])
+target_link_libraries (Branch PRIVATE bonobo CG_Labs_options)

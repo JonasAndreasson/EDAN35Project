@@ -7,7 +7,7 @@ target_sources (
 		[[project_main.cpp]]
 )
 
-target_link_libraries (EDAN35_Project PRIVATE assignment_setup parametric_tree LSystem)
+target_link_libraries (EDAN35_Project PRIVATE assignment_setup parametric_tree LSystem Branch)
 
 add_subdirectory ("${CMAKE_SOURCE_DIR}/src/Project/L-system_Tree")
 
