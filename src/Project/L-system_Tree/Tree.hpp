@@ -7,7 +7,7 @@
 
 
 //! \brief Represents a tree
-class Tree
+class Tree : public Node
 {
 
 private:
@@ -25,8 +25,7 @@ public:
 	//! @param [in] program Shader program used to render the tree (more details about it in assignment~3)
 	//! @param [in] diffuse_texture_id Identifier of the diffuse texture
 	//!             used (more details about it also in assignment~3)
-	Tree(bonobo::mesh_data const& shape, GLuint const* program,
-		GLuint diffuse_texture_id);
+	Tree();
 
 	//! \brief Render this tree.
 	//!
@@ -50,8 +49,6 @@ public:
 
 
 	//! \brief Configure the scale of this tree. ??
-	void set_scale(glm::vec3 const& scale);
-
 
 	glm::vec3 get_pos();
 

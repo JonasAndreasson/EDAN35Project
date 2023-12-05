@@ -6,18 +6,12 @@
 #include "core/helpers.hpp"
 #include "core/Log.h"
 
-Tree::Tree(bonobo::mesh_data const& shape,
-                             GLuint const* program,
-                             GLuint diffuse_texture_id)
+Tree::Tree()
 
 
 
 {	//Generate Tree using L-system -> generator
-
-	_body.node.set_geometry(shape);
-	_body.node.add_texture("diffuse_texture", diffuse_texture_id, GL_TEXTURE_2D);
-	_body.node.set_program(program);
-	
+	//Empty until figured out if we want String or L-System-obj as param.
 }
 
 glm::mat4 Tree::render(std::chrono::microseconds elapsed_time,
