@@ -597,7 +597,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 		float r = radius;
 		for (unsigned int j = 0u; j < vertical_slice_vertices_count; ++j) {
 //
-			if( i == 0u || i == circle_slice_vertices_count-1){
+			if( i == 0u || i == circle_slice_vertices_count-1 || h == 0 || h == height){
 				rand1 = 0;
 				rand2 = 0;
 			}
