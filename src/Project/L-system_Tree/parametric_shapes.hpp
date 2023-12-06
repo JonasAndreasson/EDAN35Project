@@ -64,7 +64,7 @@ namespace parametric_shapes
 	//!                             you two edges, and so on.
 	//! @return wrapper around OpenGL objects' name containing the geometry
 	//!         data
-	bonobo::mesh_data createBranch(float const radius, float const height, float const prop_loss = 0.5f,
+	bonobo::mesh_data createBranch(float const radius, float const height, float const prop_loss = 0.5f,const bonobo::mesh_data *parent = nullptr,
 		unsigned int const longitude_split_count = 10u,
 		unsigned int const vertical_split_count = 4u);
 

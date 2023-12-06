@@ -569,7 +569,7 @@ float interpolate(float x0, float y0, float x1, float y1, float x) {
 
 
 bonobo::mesh_data
-parametric_shapes::createBranch(float const radius, float const height, float const prop_loss,
+parametric_shapes::createBranch(float const radius, float const height, float const prop_loss, const bonobo::mesh_data *parent,
 	unsigned int const longitude_split_count,
 	unsigned int const vertical_split_count)
 {
@@ -606,7 +606,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 		for (unsigned int j = 0u; j < vertical_slice_vertices_count; ++j) {
 //			
 			r = interpolate(0, radius, vertical_slice_vertices_count - 1, radius * prop_loss, j);
-			if( i == 0u || i == circle_slice_vertices_count-1 || j == 0 || j == vertical_slice_vertices_count-1){
+			if( i == 0u || i == circle_slice_vertices_count-1 || j == 0u || j == vertical_slice_vertices_count-1){
 				rand1 = 0;
 				rand2 = 0;
 			}
@@ -616,12 +616,16 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 				
 			}
 			// vertex
+			if (parent != nullptr && j == 0u) {
+				//here we somehow wanna access the previous mesh' indexes.
+			}
+			else {
 
-			vertices[index] = glm::vec3(
-				(r + rand1) * cos_theta , //TODO: indroduce some randomization - at most *radius
-				 h,
-				(r + rand2) * sin_theta);
-
+				vertices[index] = glm::vec3(
+					(r + rand1) * cos_theta, //TODO: indroduce some randomization - at most *radius
+					h,
+					(r + rand2) * sin_theta);
+			}
 			// texture coordinates
 			texcoords[index] = glm::vec3(
 				static_cast<float>(i) / (static_cast<float>(circle_slice_vertices_count)),

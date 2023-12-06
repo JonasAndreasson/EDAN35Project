@@ -3,6 +3,7 @@
 #include "core/node.hpp"
 #include <string.h>
 #include <stdio.h>
+#include <stack>
 Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniforms) :Node()
 
 {	//Generate Tree using L-system -> generator
@@ -14,6 +15,7 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 	float down_scaling = 0.5f;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
+	std::stack<Branch*> stack;
 	Branch *b = nullptr;
 	for (auto c : s) {
 		switch (c) {
@@ -32,10 +34,11 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 			angle += glm::quarter_pi<float>();
 			break;
 		case '[':
-			//push current to stack
+			stack.push(b);
 				break;
 		case ']':
-			//pop from stack
+			b = stack.top();
+			stack.pop();
 				continue;
 		default:
 			break;
