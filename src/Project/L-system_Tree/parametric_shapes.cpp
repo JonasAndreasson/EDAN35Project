@@ -616,7 +616,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 				
 			}
 			// vertex
-			if (parent != nullptr && j == 0u) {
+			if (false){//(parent != nullptr && j == 0u) {
 				//here we somehow wanna access the previous mesh' indexes.
 			}
 			else {
