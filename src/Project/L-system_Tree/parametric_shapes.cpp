@@ -561,6 +561,13 @@ parametric_shapes::createCircleRing(float const radius,
 }
 
 
+float interpolate(float x0, float y0, float x1, float y1, float x) {
+	float y = y0 + (y1-y0)/(x1-x0)*(x-x0);
+	return y;
+}
+
+
+
 bonobo::mesh_data
 parametric_shapes::createBranch(float const radius, float const height, float const prop_loss,
 	unsigned int const longitude_split_count,
@@ -572,7 +579,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 	auto const circle_slice_vertices_count = circle_slice_edges_count + 1u;
 	auto const vertical_slice_vertices_count = vertical_slice_edges_count + 1u;
 	auto const vertices_nb = circle_slice_vertices_count * vertical_slice_vertices_count;
-
+	
 	auto vertices = std::vector<glm::vec3>(vertices_nb);
 	auto normals = std::vector<glm::vec3>(vertices_nb);
 	auto texcoords = std::vector<glm::vec3>(vertices_nb);
@@ -581,8 +588,9 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 
 	float const d_theta = glm::two_pi<float>() / (static_cast<float>(circle_slice_edges_count));
 	float final_theta = d_theta * (static_cast<float>(circle_slice_edges_count));
-	float height_delta = height / vertical_split_count;
-	float radius_delta = radius * prop_loss / vertical_split_count; //radius loss over each vertical step
+	float height_delta = height / vertical_slice_edges_count;
+	float radius_delta = radius * prop_loss / circle_slice_vertices_count; //radius loss over each vertical step
+
 	// generate vertices iteratively
 	srand(time(NULL));
 	size_t index = 0u;
@@ -596,8 +604,9 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 		float const sin_theta = std::sin(theta);
 		float r = radius;
 		for (unsigned int j = 0u; j < vertical_slice_vertices_count; ++j) {
-//
-			if( i == 0u || i == circle_slice_vertices_count-1 || h == 0 || h == height){
+//			
+			r = interpolate(0, radius, vertical_slice_vertices_count - 1, radius * prop_loss, j);
+			if( i == 0u || i == circle_slice_vertices_count-1 || j == 0 || j == vertical_slice_vertices_count-1){
 				rand1 = 0;
 				rand2 = 0;
 			}
@@ -638,6 +647,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 			normals[index] = n;
 
 			h += height_delta;
+			std::cout << r << '\n';
 			r -= radius_delta; //TODO: Indroduce some thinning of radius.
 			++index;
 		}

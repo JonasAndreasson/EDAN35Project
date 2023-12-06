@@ -9,8 +9,8 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 	//Empty until figured out if we want String or L-System-obj as param.
 	std::string s = "FF";
 	float angle = 0;
-	float height = 5;
-	float radius = 5;
+	float height = 2;
+	float radius = 1;
 	float down_scaling = 0.5f;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
