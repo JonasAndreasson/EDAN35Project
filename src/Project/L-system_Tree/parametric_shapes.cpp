@@ -647,7 +647,6 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 			normals[index] = n;
 
 			h += height_delta;
-			std::cout << r << '\n';
 			r -= radius_delta; //TODO: Indroduce some thinning of radius.
 			++index;
 		}

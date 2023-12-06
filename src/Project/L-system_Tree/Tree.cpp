@@ -7,7 +7,7 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
-	std::string s = "FF";
+	std::string s = "F-F+F";
 	float angle = 0;
 	float height = 2;
 	float radius = 1;
@@ -20,17 +20,16 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 		case 'F':
 			//make branch
 			b = new Branch(radius, height, position, angle, rotation, down_scaling);
-			std::cout << "Position:" << position <<'\n';
 			b->set_program(program, set_uniforms);
 			add_child(b);
 			position = b->get_end();
 			radius *= down_scaling;
 			break;
 		case '-':
-			//change the angle
+			angle -= glm::quarter_pi<float>();
 			break;
 		case '+':
-			//change the angle
+			angle += glm::quarter_pi<float>();
 			break;
 		case '[':
 			//push current to stack
