@@ -14,12 +14,12 @@ public:
 	LSystem();
 
 	//! map storing axiom data.
-	std::map<char, std::string> axioms;
+	std::map<std::string, std::string> axioms;
 
 
 	//! \brief Add rules to the Axiom
 	//! 
-	void AddAxiom(char key, std::string rule);
+	void AddAxiom(std::string key, std::string rule);
 
 
 	//! \brief Clear the axiom.

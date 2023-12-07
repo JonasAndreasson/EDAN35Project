@@ -58,17 +58,17 @@ project::ProjectMain::run()
 	*/
 
 	LSystem fractalSys;
-	fractalSys.AddAxiom('F', "F[-F][+F]");
+	fractalSys.AddAxiom("F", "F[-F][+F]");
 	
 
 	LSystem treeSys1;
-	treeSys1.AddAxiom('F', "FF");
-	treeSys1.AddAxiom('X', "F + [-F - XF - X][+FF][--XF[+X]][++F - X]");
+	treeSys1.AddAxiom("F", "FF");
+	treeSys1.AddAxiom("X", "F+[-F-XF-X][+FF][--XF[+X]][++F-X]");
 
 
 	LSystem treeSys2;
-	treeSys1.AddAxiom('F', "FF");
-	treeSys1.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
+	treeSys1.AddAxiom("F", "FF");
+	treeSys1.AddAxiom("X", "-F[+F][---X]+F-F[++++X]-X");
 
 
 
