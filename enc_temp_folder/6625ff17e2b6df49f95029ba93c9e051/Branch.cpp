@@ -15,6 +15,6 @@ Branch::Branch(float radius, float height, glm::vec3 position, float angle, glm:
 	//calculate the positions.
 	start_pos = position;
 	end_pos = position+glm::vec3(glm::rotate(glm::mat4(1.0f), angle, rotation)* glm::vec4(0, height, 0, 0)); //multiply with
-	//std::cout << "Start pos:" << start_pos << '\n';
-	//std::cout << "End pos:" << end_pos << '\n';
+	std::cout << "Start pos:" << start_pos << '\n';
+	std::cout << "End pos:" << end_pos << '\n';
 }

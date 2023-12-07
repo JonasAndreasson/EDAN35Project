@@ -755,7 +755,7 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), angle, rotation);
 	glm::mat4 trans = glm::translate(glm::mat4(1.0f), start_pos);
 	glm::mat4 model = trans*rot;
-	//std::cout << model << '\n';
+	std::cout << model << '\n';
 	auto vertices = std::vector<glm::vec3>(vertices_nb);
 	auto normals = std::vector<glm::vec3>(vertices_nb);
 	auto texcoords = std::vector<glm::vec3>(vertices_nb);
@@ -801,9 +801,9 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 					(r + rand1) * cos_theta, //TODO: indroduce some randomization - at most *radius
 					h,
 					(r + rand2) * sin_theta);
-				//std::cout << vertices[index];
+				std::cout << vertices[index];
 				vertices[index] = glm::vec3(model*glm::vec4(vertices[index],1.0));
-				//std::cout << "->" << vertices[index]<<'\n';
+				std::cout << "->" << vertices[index]<<'\n';
 			}
 			// texture coordinates
 			texcoords[index] = glm::vec3(
@@ -827,10 +827,7 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 
 			// normal
 			auto const n = glm::cross(t, b);
-			normals[index] = glm::vec3(glm::transpose(glm::inverse(model)) * glm::vec4(n, 1.0)); //Normals are transformed by (M^-1)^T (edaf80 lecture3)
-
-			tangents[index] = glm::vec3(model * glm::vec4(tangents[index], 1.0)); //tangest are transfomred by M
-
+			normals[index] = n;
 
 			h += height_delta;
 			r -= radius_delta; //TODO: Indroduce some thinning of radius.
