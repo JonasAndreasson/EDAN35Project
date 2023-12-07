@@ -14,7 +14,8 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 	float angle = 0;
 	float height = 2;
 	float radius = 0.5;
-	float down_scaling = 0.7f;
+	float down_scaling = 0.6f;
+	float down_scaling_height = 0.7f;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
 	std::stack<Branch*> stack;
@@ -32,10 +33,10 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 			b->h = height;
 			b->a = angle;
 			radius *= down_scaling;
-			height *= down_scaling;
+			height *= down_scaling_height;
 			break;
 		case '-':
-			angle -= glm::quarter_pi<float>();
+			angle -= glm::quarter_pi<float>(); //make a ransom angle between 30-50deg??
 			break;
 		case '+':
 			angle += glm::quarter_pi<float>();
@@ -50,7 +51,7 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 			radius = b->r;
 			angle = b->a;
 			radius *= down_scaling;
-			height *= down_scaling;
+			height *= down_scaling_height;
 			stack.pop();
 				continue;
 		default:

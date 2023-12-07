@@ -165,7 +165,7 @@ project::ProjectMain::run()
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
 	std::string s = fractalSys.ApplyAxioms("F", 3);
 	std::cout << s << '\n';
-	Tree tree = Tree(s,&normal_shader, set_uniforms);
+	Tree tree = Tree(s, &normal_shader, set_uniforms);
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&normal_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
