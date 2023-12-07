@@ -49,6 +49,7 @@ namespace bonobo
 		material_data material{};                //!< constant values for the material of this mesh
 		GLenum drawing_mode{GL_TRIANGLES};       //!< OpenGL drawing mode, i.e. GL_TRIANGLES, GL_LINES, etc.
 		std::string name{"un-named mesh"};       //!< Name of the mesh; used for debugging purposes.
+		std::vector<glm::vec3>vertices{};
 	};
 
 	enum class cull_mode_t : unsigned int {
