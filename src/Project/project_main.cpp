@@ -174,10 +174,11 @@ project::ProjectMain::run()
 		};
 	auto circle_rings = Node();
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
-	std::string s = fractalSys.ApplyAxioms("F", 3);
+	std::string s = treeSys1.ApplyAxioms("X", 3);
 	std::cout << s << '\n';
 	GLuint diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
-	Tree tree = Tree(s,&bark, bark_uniforms, diff_texture);
+	Tree tree = Tree(s, glm::vec3(0, 0, 0),&bark, bark_uniforms, diff_texture);
+	
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&normal_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();

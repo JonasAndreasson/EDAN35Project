@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stack>
-Tree::Tree(const std::string s, const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
+Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
@@ -16,7 +16,7 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 	float radius = 0.5;
 	float down_scaling = 0.6f;
 	float down_scaling_height = 0.7f;
-	glm::vec3 position = glm::vec3(0.0f);
+	glm::vec3 position = start_pos;
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
 	std::stack<Branch*> stack;
 	Branch *b = nullptr;
@@ -37,10 +37,12 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 			height *= down_scaling_height;
 			break;
 		case '-':
-			angle -= glm::quarter_pi<float>(); //make a random angle between 30-50deg??
+			//angle -= glm::quarter_pi<float>(); //make a ransom angle between 30-50deg??
+			angle -= glm::half_pi<float>() / 3.0f;
 			break;
 		case '+':
-			angle += glm::quarter_pi<float>();
+			//angle += glm::quarter_pi<float>();
+			angle += glm::half_pi<float>() / 3.0f;
 			break;
 		case '[':
 			stack.push(b);
