@@ -22,9 +22,14 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 		switch (c) {
 		case 'F':
 			//make branch
-			if (true){//(b == nullptr) {
-				b = new Branch(radius, height, position, angle, rotation, down_scaling,b);
-				b->set_program(program, set_uniforms);
+			
+			b = new Branch(radius, height, position, angle, rotation, down_scaling,b);
+			b->set_program(program, set_uniforms);
+			else {
+
+				//Branch *newb = new Branch(radius, height, position, angle, rotation, down_scaling, b);
+				//b = newb;
+				//b->set_program(program, set_uniforms);
 			}
 			add_child(b);
 			position = b->get_end();
