@@ -9,6 +9,7 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
 	std::string s = "F-F-F++F+F";
+	s = "F-F+F";
 	float angle = 0;
 	float height = 2;
 	float radius = 0.5;
