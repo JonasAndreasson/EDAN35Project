@@ -740,6 +740,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 	return data;
 }
 
+
 bonobo::mesh_data
 parametric_shapes::createBranch(float const radius, float const height,glm::vec3 start_pos,float angle, glm::vec3 rotation,float const prop_loss, const bonobo::mesh_data* parent,
 	unsigned int const longitude_split_count,
@@ -792,7 +793,7 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 			}
 			// vertex
 			if  (parent != nullptr && j == 0u) {
-				vertices[index] = parent->vertices[index + 5];
+				vertices[index] = parent->vertices[index + vertical_slice_edges_count];
 			}
 			else {
 

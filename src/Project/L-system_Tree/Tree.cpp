@@ -4,12 +4,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stack>
-Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniforms) :Node()
+Tree::Tree(const std::string s, const GLuint* program, const std::function<void(GLuint)>& set_uniforms) :Node()
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
-	std::string s = "F-F-F++F+F";
-	s = "F-F+F";
+	// 
+	//s = "F-F+F";
+	if (s == "") return;
 	float angle = 0;
 	float height = 2;
 	float radius = 0.5;
@@ -26,7 +27,10 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 			b = new Branch(radius, height, position, angle, rotation, down_scaling,b);
 			b->set_program(program, set_uniforms);
 			add_child(b);
-			position = b->get_end();
+			position = b->get_end()+glm::vec3(0,height*0.05,0);
+			b->r = radius;
+			b->h = height;
+			b->a = angle;
 			radius *= down_scaling;
 			height *= down_scaling;
 			break;
@@ -41,6 +45,12 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 				break;
 		case ']':
 			b = stack.top();
+			height = b->h;
+			position = b->get_end() + glm::vec3(0, height * 0.05, 0);
+			radius = b->r;
+			angle = b->a;
+			radius *= down_scaling;
+			height *= down_scaling;
 			stack.pop();
 				continue;
 		default:

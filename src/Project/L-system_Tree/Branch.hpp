@@ -14,6 +14,7 @@ private:
 	glm::vec3 start_pos;
 	glm::vec3 end_pos;
 	bonobo::mesh_data mesh{ NULL };
+	
 
 public:
 
@@ -21,5 +22,8 @@ public:
 	const glm::vec3 get_start() { return start_pos; }
 	const glm::vec3 get_end() { return end_pos;  }
 	const bonobo::mesh_data get_mesh() { return mesh; }
+	float a;
+	float h;
+	float r;
 
 };
