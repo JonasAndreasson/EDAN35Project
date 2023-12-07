@@ -67,8 +67,8 @@ project::ProjectMain::run()
 
 
 	LSystem treeSys2;
-	treeSys1.AddAxiom('F', "FF");
-	treeSys1.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
+	treeSys2.AddAxiom('F', "FF");
+	treeSys2.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
 
 
 
@@ -174,7 +174,7 @@ project::ProjectMain::run()
 		};
 	auto circle_rings = Node();
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
-	std::string s = fractalSys.ApplyAxioms("F", 3);
+	std::string s = treeSys1.ApplyAxioms("X", 3);
 	std::cout << s << '\n';
 	GLuint diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
 	Tree tree = Tree(s,&bark, bark_uniforms, diff_texture);
