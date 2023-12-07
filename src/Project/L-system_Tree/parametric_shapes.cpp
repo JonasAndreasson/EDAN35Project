@@ -604,8 +604,9 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 		float const sin_theta = std::sin(theta);
 		float r = radius;
 		for (unsigned int j = 0u; j < vertical_slice_vertices_count; ++j) {
-//			
-			r = interpolate(0, radius, vertical_slice_vertices_count - 1, radius * prop_loss, j);
+			
+			r = interpolate(0, radius, vertical_slice_vertices_count - 1, radius * prop_loss, j); // Indroducing some thinning of radius.
+
 			if( i == 0u || i == circle_slice_vertices_count-1 || j == 0u || j == vertical_slice_vertices_count-1){
 				rand1 = 0;
 				rand2 = 0;
@@ -622,7 +623,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 			else {
 
 				vertices[index] = glm::vec3(
-					(r + rand1) * cos_theta, //TODO: indroduce some randomization - at most *radius
+					(r + rand1) * cos_theta, //indroducing some randomization - at most *radius
 					h,
 					(r + rand2) * sin_theta);
 			}
@@ -651,7 +652,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 			normals[index] = n;
 
 			h += height_delta;
-			r -= radius_delta; //TODO: Indroduce some thinning of radius.
+			//r -= radius_delta; //Previous - indroducing some thinning of radius.
 			++index;
 		}
 
