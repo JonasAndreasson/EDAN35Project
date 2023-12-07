@@ -22,10 +22,9 @@ public:
 	//! @param [in] program Shader program used to render the tree (more details about it in assignment~3)
 	//! @param [in] diffuse_texture_id Identifier of the diffuse texture
 	//!             used (more details about it also in assignment~3)
-	Tree(const std::string s, const GLuint* program, const std::function<void(GLuint)>& set_uniforms = [](GLuint) {}, const GLuint texture = 0u);
+	Tree(const std::string s, const glm::vec3 start_pos, const GLuint* program, const std::function<void(GLuint)>& set_uniforms = [](GLuint) {}, const GLuint texture = 0u);
 
 	//! \brief Configure the scale of this tree. ??
-
 	glm::vec3 get_pos();
 
 };
