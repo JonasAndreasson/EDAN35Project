@@ -740,7 +740,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 }
 
 bonobo::mesh_data
-parametric_shapes::createBranch(float const radius, float const height,float angle, glm::vec3 rotation,float const prop_loss, const bonobo::mesh_data* parent,
+parametric_shapes::createBranch(float const radius, float const height,glm::vec3 start_pos,float angle, glm::vec3 rotation,float const prop_loss, const bonobo::mesh_data* parent,
 	unsigned int const longitude_split_count,
 	unsigned int const vertical_split_count)
 {
@@ -750,7 +750,10 @@ parametric_shapes::createBranch(float const radius, float const height,float ang
 	auto const circle_slice_vertices_count = circle_slice_edges_count + 1u;
 	auto const vertical_slice_vertices_count = vertical_slice_edges_count + 1u;
 	auto const vertices_nb = circle_slice_vertices_count * vertical_slice_vertices_count;
-	glm::mat4 model = glm::rotate(glm::mat4(1.0f), angle, rotation);
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), angle, rotation);
+	glm::mat4 trans = glm::translate(glm::mat4(1.0f), start_pos);
+	glm::mat4 model = trans*rot;
+	std::cout << model << '\n';
 	auto vertices = std::vector<glm::vec3>(vertices_nb);
 	auto normals = std::vector<glm::vec3>(vertices_nb);
 	auto texcoords = std::vector<glm::vec3>(vertices_nb);
@@ -796,7 +799,9 @@ parametric_shapes::createBranch(float const radius, float const height,float ang
 					(r + rand1) * cos_theta, //TODO: indroduce some randomization - at most *radius
 					h,
 					(r + rand2) * sin_theta);
-				vertices[index] = glm::vec3(glm::vec4(vertices[index],0.0) * model);
+				std::cout << vertices[index];
+				vertices[index] = glm::vec3(glm::vec4(vertices[index],1.0)*model);
+				std::cout << "->" << vertices[index]<<'\n';
 			}
 			// texture coordinates
 			texcoords[index] = glm::vec3(
@@ -832,7 +837,6 @@ parametric_shapes::createBranch(float const radius, float const height,float ang
 
 	// create index array
 	auto index_sets = std::vector<glm::uvec3>(2u * circle_slice_edges_count * vertical_slice_edges_count);
-
 	// generate indices iteratively
 	index = 0u;
 	for (unsigned int i = 0u; i < circle_slice_edges_count; ++i)
