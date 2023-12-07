@@ -160,12 +160,24 @@ project::ProjectMain::run()
 	// Set whether to show the control points or not; it can always be changed
 	// at runtime through the "Scene Controls" window.
 	bool show_control_points = true;
+	GLuint bark = 0u;
+	program_manager.CreateAndRegisterProgram("Texture coords",
+		{ { ShaderType::vertex, "project/texture.vert" },
+		  { ShaderType::fragment, "project/texture.frag" } },
+		bark);
+	if (bark == 0u)
+		LogError("Failed to load texcoord shader");
 
+	
+	auto const bark_uniforms = [&light_position](GLuint program) {
+		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
+		};
 	auto circle_rings = Node();
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
 	std::string s = fractalSys.ApplyAxioms("F", 3);
 	std::cout << s << '\n';
-	Tree tree = Tree(s,&normal_shader, set_uniforms);
+	GLuint diff_texture = bonobo::loadTexture2D(config::resources_path("textures/leather_red_02_coll1_2k.jpg"));
+	Tree tree = Tree(s,&bark, bark_uniforms, diff_texture);
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&normal_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();

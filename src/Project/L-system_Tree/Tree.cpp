@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stack>
-Tree::Tree(const std::string s, const GLuint* program, const std::function<void(GLuint)>& set_uniforms) :Node()
+Tree::Tree(const std::string s, const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
@@ -26,6 +26,7 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 			
 			b = new Branch(radius, height, position, angle, rotation, down_scaling,b);
 			b->set_program(program, set_uniforms);
+			b->add_texture("bark", texture, GL_TEXTURE_2D);
 			add_child(b);
 			position = b->get_end()+glm::vec3(0,height*0.05,0);
 			b->r = radius;
