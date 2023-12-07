@@ -1,9 +1,14 @@
 #include "Branch.hpp"
 #include "parametric_shapes.hpp"
 #include <stdio.h>
-Branch::Branch(float radius, float height, glm::vec3 position, float angle, glm::vec3 rotation, float down_scaling) : Node(){
+Branch::Branch(float radius, float height, glm::vec3 position, float angle, glm::vec3 rotation, float down_scaling, Branch* b) : Node(){
 	//setup mesh, rotate, move
-	auto const mesh = parametric_shapes::createBranch(radius, height, position,angle,rotation,down_scaling);
+	if (b != nullptr) {
+		mesh = parametric_shapes::createBranch(radius, height, position, angle, rotation, down_scaling, &b->get_mesh());
+	}
+	else {
+		mesh = parametric_shapes::createBranch(radius, height, position, angle, rotation, down_scaling);
+	}
 	set_geometry(mesh);
 	//get_transform().SetRotate(angle, rotation);
 	//get_transform().SetTranslate(position);
