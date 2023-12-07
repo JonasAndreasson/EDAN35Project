@@ -14,7 +14,7 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 	float angle = 0;
 	float height = 2;
 	float radius = 0.5;
-	float down_scaling = 0.5f;
+	float down_scaling = 0.7f;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
 	std::stack<Branch*> stack;
