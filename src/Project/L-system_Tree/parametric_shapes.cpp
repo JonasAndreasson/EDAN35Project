@@ -827,7 +827,10 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 
 			// normal
 			auto const n = glm::cross(t, b);
-			normals[index] = n;
+			normals[index] = glm::vec3(glm::transpose(glm::inverse(model)) * glm::vec4(n, 1.0)); //Normals are transformed by (M^-1)^T (edaf80 lecture3)
+
+			tangents[index] = glm::vec3(model * glm::vec4(tangents[index], 1.0)); //tangest are transfomred by M
+
 
 			h += height_delta;
 			r -= radius_delta; //TODO: Indroduce some thinning of radius.
