@@ -833,7 +833,7 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 
 
 			h += height_delta;
-			r -= radius_delta; //TODO: Indroduce some thinning of radius.
+			//r -= radius_delta; //TODO: Indroduce some thinning of radius.
 			++index;
 		}
 
