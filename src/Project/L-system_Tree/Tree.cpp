@@ -25,12 +25,6 @@ Tree::Tree(const GLuint* program, const std::function<void(GLuint)>& set_uniform
 			
 			b = new Branch(radius, height, position, angle, rotation, down_scaling,b);
 			b->set_program(program, set_uniforms);
-			else {
-
-				//Branch *newb = new Branch(radius, height, position, angle, rotation, down_scaling, b);
-				//b = newb;
-				//b->set_program(program, set_uniforms);
-			}
 			add_child(b);
 			position = b->get_end();
 			radius *= down_scaling;
