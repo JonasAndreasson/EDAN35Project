@@ -37,7 +37,7 @@ Tree::Tree(const std::string s, const GLuint* program, const std::function<void(
 			height *= down_scaling_height;
 			break;
 		case '-':
-			angle -= glm::quarter_pi<float>(); //make a ransom angle between 30-50deg??
+			angle -= glm::quarter_pi<float>(); //make a random angle between 30-50deg??
 			break;
 		case '+':
 			angle += glm::quarter_pi<float>();

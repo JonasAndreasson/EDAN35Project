@@ -67,8 +67,8 @@ project::ProjectMain::run()
 
 
 	LSystem treeSys2;
-	treeSys1.AddAxiom('F', "FF");
-	treeSys1.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
+	treeSys2.AddAxiom('F', "FF");
+	treeSys2.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
 
 
 
