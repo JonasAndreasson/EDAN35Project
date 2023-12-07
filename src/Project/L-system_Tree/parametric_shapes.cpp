@@ -801,9 +801,7 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 					(r + rand1) * cos_theta, //TODO: indroduce some randomization - at most *radius
 					h,
 					(r + rand2) * sin_theta);
-				std::cout << vertices[index];
 				vertices[index] = glm::vec3(model*glm::vec4(vertices[index],1.0));
-				std::cout << "->" << vertices[index]<<'\n';
 			}
 			// texture coordinates
 			texcoords[index] = glm::vec3(

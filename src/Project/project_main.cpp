@@ -58,17 +58,17 @@ project::ProjectMain::run()
 	*/
 
 	LSystem fractalSys;
-	fractalSys.AddAxiom("F", "F[-F][+F]");
+	fractalSys.AddAxiom('F', "F[-F][+F]");
 	
 
 	LSystem treeSys1;
-	treeSys1.AddAxiom("F", "FF");
-	treeSys1.AddAxiom("X", "F+[-F-XF-X][+FF][--XF[+X]][++F-X]");
+	treeSys1.AddAxiom('F', "FF");
+	treeSys1.AddAxiom('X', "F+[-F-XF-X][+FF][--XF[+X]][++F-X]");
 
 
 	LSystem treeSys2;
-	treeSys1.AddAxiom("F", "FF");
-	treeSys1.AddAxiom("X", "-F[+F][---X]+F-F[++++X]-X");
+	treeSys1.AddAxiom('F', "FF");
+	treeSys1.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
 
 
 
@@ -163,7 +163,7 @@ project::ProjectMain::run()
 
 	auto circle_rings = Node();
 	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
-	std::string s = fractalSys.ApplyAxioms("F", 5);
+	std::string s = fractalSys.ApplyAxioms("F", 3);
 	std::cout << s << '\n';
 	Tree tree = Tree(s,&normal_shader, set_uniforms);
 	circle_rings.set_geometry(shape);

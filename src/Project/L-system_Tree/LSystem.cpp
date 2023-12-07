@@ -5,7 +5,7 @@
 
 
 //Iterator used to step through map. Our iterator is called 'ruleIter'
-typedef std::map<std::string, std::string>::iterator ruleIter;
+typedef std::map<char, std::string>::iterator ruleIter;
 
 LSystem::LSystem()
 {
@@ -15,7 +15,7 @@ LSystem::LSystem()
 
 //!< Add variable and its production rule to the axioms parameter.
 //! Production rules are defined by  key -> rule
-void LSystem::AddAxiom(std::string key, std::string rule)
+void LSystem::AddAxiom(char key, std::string rule)
 {
 	axioms[key] = rule;
 }
@@ -42,7 +42,7 @@ std::string LSystem::ApplyAxioms(std::string system)
 		// The iterator goes over map pairs.(first is key, second is value)
 		for (ruleIter rule = axioms.begin(); rule != axioms.end(); ++rule) { // map.end() happens if the key isn't in the map.
 
-			if (false) { //(system[j] == rule->first) { //Compare input item to each key NOTE: char == string doesn't work
+			if (system[j] == rule->first) { //Compare input item to each key NOTE: char == string doesn't work
 
 				noRule = false;
 				newSystem += rule->second; //Put the rule value in place of input variabel.
