@@ -87,7 +87,7 @@ project::ProjectMain::run()
 		return;
 
 	// Set up the camera
-	mCamera.mWorld.SetTranslate(glm::vec3(0.0f, 1.0f, 1.0f));
+	mCamera.mWorld.SetTranslate(glm::vec3(0.0f, 1.0f, 5.0f));
 	mCamera.mMouseSensitivity = glm::vec2(0.003f);
 	mCamera.mMovementSpeed = glm::vec3(3.0f); // 3 m/s => 10.8 km/h
 	auto camera_position = mCamera.mWorld.GetTranslation();
@@ -123,7 +123,8 @@ project::ProjectMain::run()
 		LogError("Failed to load skybox shader");
 	
 
-		//Diffuse, Normal, Tangent, Binormal, teexcoord - These we can maybe remove??
+		//Diffuse, Normal, Tangent, Binormal, teexcoord - These we can maybe remove/Replace with whatever from deffered shading..
+
 	GLuint diffuse_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Diffuse",
 	                                         { { ShaderType::vertex, "project/diffuse.vert" },
@@ -168,58 +169,35 @@ project::ProjectMain::run()
 	auto const set_uniforms = [&light_position](GLuint program){
 		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
 	};
-	// Set the default tensions value; it can always be changed at runtime
-	// through the "Scene Controls" window.
-	float catmull_rom_tension = 0.5f;
-	// Set whether the default interpolation algorithm should be the linear one;
-	// it can always be changed at runtime through the "Scene Controls" window.
-	bool use_linear = true;
-	// Set whether to interpolate the position of an object or not; it can
-	// always be changed at runtime through the "Scene Controls" window.
-	bool interpolate = true;
-	// Set whether to show the control points or not; it can always be changed
-	// at runtime through the "Scene Controls" window.
-	bool show_control_points = true;
-
-		// Tree Bark shader
-	GLuint bark = 0u;
-	program_manager.CreateAndRegisterProgram("Tree_Bark",
+	
+	
+		// Texture shader used for tree-bark, sky, any objects...
+	GLuint texture_shader = 0u;
+	program_manager.CreateAndRegisterProgram("texture",
 		{ { ShaderType::vertex, "project/texture.vert" },
 		  { ShaderType::fragment, "project/texture.frag" } },
-		bark);
-	if (bark == 0u)
-		LogError("Failed to load treebark shader");
-
-		//Ground shader
-	GLuint ground_shader = 0u;
-	program_manager.CreateAndRegisterProgram("Ground",
-		{ { ShaderType::vertex, "project/water.vert"},
-		{ShaderType::fragment, "project/water.frag"} }, ground_shader);
-	if (ground_shader == 0u) {
-		LogError("Failed to load ground shader");
-		return;
-	}
-	/*auto water_uniforms = [&elapsed_time_s, &camera_position](GLuint program) {
-		glUniform1f(glGetUniformLocation(program, "elapsed_time_s"), elapsed_time_s);
-		glUniform3fv(glGetUniformLocation(program, "camera_position"), 1, glm::value_ptr(camera_position));
-	};*/
+		texture_shader);
+	if (texture_shader == 0u)
+		LogError("Failed to load texture shader");
 
 
 	
 	auto const bark_uniforms = [&light_position](GLuint program) {
 		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
 		};
-	//auto circle_rings = Node();
-	//auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
 
-	GLuint cubemap = bonobo::loadTextureCubeMap(
+
+	/*GLuint cubemap = bonobo::loadTextureCubeMap(
 		config::resources_path("cubemaps/NissiBeach2/posx.jpg"),
 		config::resources_path("cubemaps/NissiBeach2/negx.jpg"),
 		config::resources_path("cubemaps/NissiBeach2/posy.jpg"),
 		config::resources_path("cubemaps/NissiBeach2/negy.jpg"),
 		config::resources_path("cubemaps/NissiBeach2/posz.jpg"),
-		config::resources_path("cubemaps/NissiBeach2/negz.jpg"));
-	GLuint ground_texture = bonobo::loadTexture2D(config::resources_path("textures/waves.png"));
+		config::resources_path("cubemaps/NissiBeach2/negz.jpg"));*/
+	GLuint ground_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_diffuse_4k.jpg"));
+	GLuint ground_disp_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_disp_4k"));
+	GLuint ground_normal_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_nor_gl_4k.png"));
+
 	GLuint sky_texture = bonobo::loadTexture2D(config::resources_path("textures/sky/industrial_sunset_puresky.jpg"));
 	
 	// --- Shaders done 
@@ -239,14 +217,16 @@ project::ProjectMain::run()
 	Node plane;
 	plane.set_geometry(quad);
 	plane.get_transform().SetTranslate(glm::vec3(-50.0, 0, -50.0));
-	plane.set_program(&ground_shader);
-	plane.add_texture("wave_texture", ground_texture, GL_TEXTURE_2D);
+	plane.set_program(&texture_shader);
+	plane.add_texture("ground_texture", ground_diff_texture, GL_TEXTURE_2D);
 	plane.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
+
+
 
 	std::string s = shrubby.ApplyAxioms("F", 5); //TODO: This could be done in tree...?
 	//std::cout << s << '\n';
-	GLuint diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
-	Tree tree = Tree(s, shrubby, glm::vec3(0, 0, 0),&bark, bark_uniforms, diff_texture);
+	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
+	Tree tree = Tree(s, shrubby, glm::vec3(0, 0, 0),&texture_shader, bark_uniforms, tree_diff_texture);
 	
 	//circle_rings.set_geometry(shape);
 	//circle_rings.set_program(&normal_shader, set_uniforms);
@@ -350,10 +330,6 @@ project::ProjectMain::run()
 				//second_branch.set_program(selection_result.program, set_uniforms);
 			}
 			ImGui::Separator();
-			ImGui::Checkbox("Show control points", &show_control_points);
-			//ImGui::Checkbox("Enable interpolation", &interpolate);
-			ImGui::Checkbox("Use linear interpolation", &use_linear);
-			ImGui::SliderFloat("Catmull-Rom tension", &catmull_rom_tension, 0.0f, 1.0f);
 			ImGui::Separator();
 			ImGui::Checkbox("Show basis", &show_basis);
 			ImGui::SliderFloat("Basis thickness scale", &basis_thickness_scale, 0.0f, 100.0f);
