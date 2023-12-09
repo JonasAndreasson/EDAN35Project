@@ -189,24 +189,36 @@ project::ProjectMain::run()
 		bark);
 	if (bark == 0u)
 		LogError("Failed to load treebark shader");
+		//Ground shader
+	GLuint ground_shader = 0u;
+	program_manager.CreateAndRegisterProgram("Ground",
+		{ { ShaderType::vertex, "EDAF80/water.vert"},
+		{ShaderType::fragment, "EDAF80/water.frag"} }, ground_shader);
+	if (ground_shader == 0u) {
+		LogError("Failed to load ground shader");
+		return;
+	}
+	/*auto water_uniforms = [&elapsed_time_s, &camera_position](GLuint program) {
+		glUniform1f(glGetUniformLocation(program, "elapsed_time_s"), elapsed_time_s);
+		glUniform3fv(glGetUniformLocation(program, "camera_position"), 1, glm::value_ptr(camera_position));
+	};*/
 
 
+	auto quad = parametric_shapes::createQuad(100, 100, 1000, 1000);
 	auto const bark_uniforms = [&light_position](GLuint program) {
 		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
 		};
 	//auto circle_rings = Node();
 	//auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
 
-
 	GLuint cubemap = bonobo::loadTextureCubeMap(
-		config::resources_path("cubemaps/SemiSky/sky-right.png"),
-		config::resources_path("cubemaps/SemiSky/sky-left.png"),
-		config::resources_path("cubemaps/SemiSky/sky-top.png"),
-		config::resources_path("cubemaps/SemiSky/sky-bottom.png"),
-		config::resources_path("cubemaps/SemiSky/sky-front.png"),
-		config::resources_path("cubemaps/SemiSky/sky-back.png")
-	);
-
+		config::resources_path("cubemaps/NissiBeach2/posx.jpg"),
+		config::resources_path("cubemaps/NissiBeach2/negx.jpg"),
+		config::resources_path("cubemaps/NissiBeach2/posy.jpg"),
+		config::resources_path("cubemaps/NissiBeach2/negy.jpg"),
+		config::resources_path("cubemaps/NissiBeach2/posz.jpg"),
+		config::resources_path("cubemaps/NissiBeach2/negz.jpg"));
+	GLuint ground_texture = bonobo::loadTexture2D(config::resources_path("textures/waves.png"));
 
 	// --- Shaders done 
 
@@ -220,6 +232,12 @@ project::ProjectMain::run()
 	skybox.add_texture("cubemap", cubemap, GL_TEXTURE_CUBE_MAP);
 	skybox.set_program(&skybox_shader);
 
+	Node plane;
+	plane.set_geometry(quad);
+	plane.get_transform().SetTranslate(glm::vec3(-50.0, 0, -50.0));
+	plane.set_program(&ground_shader);
+	plane.add_texture("wave_texture", ground_texture, GL_TEXTURE_2D);
+	plane.add_texture("cubemap", cubemap, GL_TEXTURE_CUBE_MAP);
 
 	std::string s = shrubby.ApplyAxioms("F", 5); //TODO: This could be done in tree...?
 	//std::cout << s << '\n';
@@ -294,7 +312,14 @@ project::ProjectMain::run()
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		bonobo::changePolygonMode(polygon_mode);
 
+		// Render background scene
+		glDisable(GL_DEPTH_TEST);
+		skybox.get_transform().SetTranslate(camera_position);
+		skybox.render(mCamera.GetWorldToClipMatrix());
+		glEnable(GL_DEPTH_TEST);
+		plane.render(mCamera.GetWorldToClipMatrix());
 
+	
 
 		//circle_rings.render(mCamera.GetWorldToClipMatrix());
 		//second_branch.render(mCamera.GetWorldToClipMatrix());
@@ -303,8 +328,7 @@ project::ProjectMain::run()
 			tree.get_child(i)->render(mCamera.GetWorldToClipMatrix());
 		}
 
-		skybox.get_transform().SetTranslate(glm::vec3(camera_position));
-		skybox.render(mCamera.GetWorldToClipMatrix());
+		
 
 		
 
