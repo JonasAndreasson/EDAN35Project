@@ -189,11 +189,12 @@ project::ProjectMain::run()
 		bark);
 	if (bark == 0u)
 		LogError("Failed to load treebark shader");
+
 		//Ground shader
 	GLuint ground_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Ground",
-		{ { ShaderType::vertex, "EDAF80/water.vert"},
-		{ShaderType::fragment, "EDAF80/water.frag"} }, ground_shader);
+		{ { ShaderType::vertex, "project/water.vert"},
+		{ShaderType::fragment, "project/water.frag"} }, ground_shader);
 	if (ground_shader == 0u) {
 		LogError("Failed to load ground shader");
 		return;
@@ -204,7 +205,7 @@ project::ProjectMain::run()
 	};*/
 
 
-	auto quad = parametric_shapes::createQuad(100, 100, 1000, 1000);
+	
 	auto const bark_uniforms = [&light_position](GLuint program) {
 		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
 		};
@@ -219,7 +220,8 @@ project::ProjectMain::run()
 		config::resources_path("cubemaps/NissiBeach2/posz.jpg"),
 		config::resources_path("cubemaps/NissiBeach2/negz.jpg"));
 	GLuint ground_texture = bonobo::loadTexture2D(config::resources_path("textures/waves.png"));
-
+	GLuint sky_texture = bonobo::loadTexture2D(config::resources_path("textures/sky/industrial_sunset_puresky.jpg"));
+	
 	// --- Shaders done 
 
 	auto skybox_shape = parametric_shapes::createSphere(100.0f, 100u, 100u);
@@ -227,17 +229,19 @@ project::ProjectMain::run()
 		LogError("Failed to retrieve the mesh for the skybox");
 		return;
 	}
-	Node skybox, surface;
+
+	Node skybox;
 	skybox.set_geometry(skybox_shape);
-	skybox.add_texture("cubemap", cubemap, GL_TEXTURE_CUBE_MAP);
+	skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 	skybox.set_program(&skybox_shader);
 
+	auto quad = parametric_shapes::createQuad(100, 100, 1000, 1000);
 	Node plane;
 	plane.set_geometry(quad);
 	plane.get_transform().SetTranslate(glm::vec3(-50.0, 0, -50.0));
 	plane.set_program(&ground_shader);
 	plane.add_texture("wave_texture", ground_texture, GL_TEXTURE_2D);
-	plane.add_texture("cubemap", cubemap, GL_TEXTURE_CUBE_MAP);
+	plane.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 
 	std::string s = shrubby.ApplyAxioms("F", 5); //TODO: This could be done in tree...?
 	//std::cout << s << '\n';
