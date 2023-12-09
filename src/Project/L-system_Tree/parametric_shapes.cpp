@@ -8,6 +8,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include<time.h>
 
 bonobo::mesh_data
 parametric_shapes::createQuad(float const width, float const height,

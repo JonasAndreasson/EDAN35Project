@@ -4,6 +4,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stack>
+#include <random>
+
 Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
 
 {	//Generate Tree using L-system -> generator
@@ -20,7 +22,12 @@ Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
 	std::stack<Branch*> stack;
 	Branch *b = nullptr;
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(1, 3);
+	auto randAngle = std::bind(distribution, generator);
+
 	for (auto c : s) {
+
 		switch (c) {
 		case 'F':
 			//make branch
@@ -37,12 +44,15 @@ Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program
 			height *= down_scaling_height;
 			break;
 		case '-':
-			//angle -= glm::quarter_pi<float>(); //make a ransom angle between 30-50deg??
-			angle -= glm::half_pi<float>() / 3.0f;
+			//make a ransom angle between
+			
+			angle -= (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+			std::cout << "Angle:" << angle << '\n';
 			break;
 		case '+':
 			//angle += glm::quarter_pi<float>();
-			angle += glm::half_pi<float>() / 3.0f;
+	
+			angle += (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 			break;
 		case '[':
 			stack.push(b);
