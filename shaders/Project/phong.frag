@@ -34,9 +34,8 @@ void main(){
 		norm = normalize(tbn * (2*vec3(texture(normal_texture, fs_in.texcoord))-vec3(1.0)));
 	}
 	float K = dot(reflect(-L, norm),V_norm);
-	specular = texture(specular_texture,fs_in.texcoord) * pow(max(K,0), shininess_value);
+	//specular = texture(specular_texture,fs_in.texcoord) * pow(max(K,0), shininess_value);
 	vec4 diffuse = texture(diff_texture,fs_in.texcoord) * max(dot(norm,L), 0);
 	frag_color = vec4(ambient_colour,1.0) +
-				diffuse +
-				specular;
+				diffuse ;//+ specular;
 }

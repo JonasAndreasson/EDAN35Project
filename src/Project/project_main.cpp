@@ -87,7 +87,7 @@ project::ProjectMain::run()
 		return;
 
 	// Set up the camera
-	mCamera.mWorld.SetTranslate(glm::vec3(0.0f, 1.0f, 5.0f));
+	mCamera.mWorld.SetTranslate(glm::vec3(0.0f, 2.0f, 0.0f));
 	mCamera.mMouseSensitivity = glm::vec2(0.003f);
 	mCamera.mMovementSpeed = glm::vec3(3.0f); // 3 m/s => 10.8 km/h
 	auto camera_position = mCamera.mWorld.GetTranslation();
@@ -165,11 +165,29 @@ project::ProjectMain::run()
 	if (texcoord_shader == 0u)
 		LogError("Failed to load texcoord shader");
 
+
+
+	GLuint phong_shader = 0u;
+	program_manager.CreateAndRegisterProgram("Phong",
+		{ { ShaderType::vertex, "project/phong.vert" },
+		  { ShaderType::fragment, "project/phong.frag" } },
+		phong_shader);
+
+	if ((phong_shader) == 0u)
+		LogError("Failed to load phong shader");
+
+
+	
 	auto const light_position = glm::vec3(-2.0f, 4.0f, 2.0f);
 	auto const set_uniforms = [&light_position](GLuint program){
 		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
 	};
-	
+	bool use_normal_mapping = false;
+	auto const phong_set_uniforms = [&use_normal_mapping, &light_position, &camera_position](GLuint program) {
+		glUniform1i(glGetUniformLocation(program, "use_normal_mapping"), use_normal_mapping ? 1 : 0);
+		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
+		glUniform3fv(glGetUniformLocation(program, "camera_position"), 1, glm::value_ptr(camera_position));
+	};
 	
 		// Texture shader used for tree-bark, sky, any objects...
 	GLuint texture_shader = 0u;
@@ -213,13 +231,15 @@ project::ProjectMain::run()
 	skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 	skybox.set_program(&skybox_shader);
 
-	auto quad = parametric_shapes::createQuad(100, 100, 1000, 1000);
+	auto quad = parametric_shapes::createQuad(200, 200, 10000, 10000);
 	Node plane;
 	plane.set_geometry(quad);
-	plane.get_transform().SetTranslate(glm::vec3(-50.0, 0, -50.0));
-	plane.set_program(&texture_shader);
-	plane.add_texture("ground_texture", ground_diff_texture, GL_TEXTURE_2D);
-	plane.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
+	plane.get_transform().SetTranslate(glm::vec3(0.0, 0, 0.0));
+	plane.set_program(&phong_shader, phong_set_uniforms);
+	plane.add_texture("diff_texture", ground_diff_texture, GL_TEXTURE_2D);
+	
+	plane.add_texture("normal_texture", ground_normal_texture, GL_TEXTURE_2D);
+
 
 
 
