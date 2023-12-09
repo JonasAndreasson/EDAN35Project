@@ -32,7 +32,7 @@ Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program
 		case 'F':
 			//make branch
 			
-			b = new Branch(radius, height, position, angle, rotation, down_scaling,b);
+			b = new Branch(radius, height, position, angle, rotation, down_scaling, b);
 			b->set_program(program, set_uniforms);
 			b->add_texture("bark", texture, GL_TEXTURE_2D);
 			add_child(b);
@@ -44,15 +44,16 @@ Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program
 			height *= down_scaling_height;
 			break;
 		case '-':
-			//make a ransom angle between
 			
-			angle -= (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+			angle -= glm::quarter_pi<float>();
+
+			//angle -= (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 			std::cout << "Angle:" << angle << '\n';
 			break;
 		case '+':
-			//angle += glm::quarter_pi<float>();
+			angle += glm::quarter_pi<float>();
 	
-			angle += (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+			//angle += (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 			break;
 		case '[':
 			stack.push(b);
