@@ -54,21 +54,34 @@ project::ProjectMain::run()
 			"F" : draw branch
 			"X" : Dummy command - do nothing, used for organic generation
 			"[" : push position
-			"]" : pop position
+			"]" : pop position (here we can add leaves?
 	*/
 
 	LSystem fractalSys;
 	fractalSys.AddAxiom('F', "F[-F][+F]");
+	fractalSys.angle = 0.4485496;
+	
+
+	LSystem shrubby;
+	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
+	shrubby.angle = 0.4485496;
+	shrubby.radius = 0.005;
+	shrubby.height = 0.06;
+	shrubby.down_scaling = 0.9;
+	shrubby.down_scaling_height = 0.9;
+
+
+
 	
 
 	LSystem treeSys1;
-	treeSys1.AddAxiom('F', "FF");
-	treeSys1.AddAxiom('X', "F + [-F - XF - X][+FF][--XF[+X]][++F - X]");
+	treeSys1.AddAxiom('F', "F-[-F+F+F]+[+F-F-F]");
+	treeSys1.angle = 0.3926991;
 
 
 	LSystem treeSys2;
-	treeSys2.AddAxiom('F', "FF");
-	treeSys2.AddAxiom('X', "-F[+F][---X]+F-F[++++X]-X");
+	treeSys2.AddAxiom('F', "F[-F+F+F][+F-F-F]");
+	treeSys2.angle = 0.3926991;
 
 
 
@@ -173,19 +186,19 @@ project::ProjectMain::run()
 		glUniform3fv(glGetUniformLocation(program, "light_position"), 1, glm::value_ptr(light_position));
 		};
 	auto circle_rings = Node();
-	auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
+	//auto second_branch = Branch(0.025f, 0.15f, glm::vec3(0,0,0), 0, glm::vec3(1.0),0.5f);
 
 
 
-	std::string s = fractalSys.ApplyAxioms("F", 3);
+	std::string s = shrubby.ApplyAxioms("F", 5);
 	std::cout << s << '\n';
 	GLuint diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
-	Tree tree = Tree(s, glm::vec3(0, 0, 0),&bark, bark_uniforms, diff_texture);
+	Tree tree = Tree(s, shrubby, glm::vec3(0, 0, 0),&bark, bark_uniforms, diff_texture);
 	
 	circle_rings.set_geometry(shape);
 	circle_rings.set_program(&normal_shader, set_uniforms);
 	TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
-	second_branch.set_program(&normal_shader, set_uniforms);
+	//second_branch.set_program(&normal_shader, set_uniforms);
 	
 	
 
@@ -253,7 +266,7 @@ project::ProjectMain::run()
 
 
 		//circle_rings.render(mCamera.GetWorldToClipMatrix());
-		second_branch.render(mCamera.GetWorldToClipMatrix());
+		//second_branch.render(mCamera.GetWorldToClipMatrix());
 		//tree.render(mCamera.GetWorldToClipMatrix());
 		for (size_t i = 0; i < tree.get_children_nb(); i += 1) {
 			tree.get_child(i)->render(mCamera.GetWorldToClipMatrix());
@@ -272,7 +285,7 @@ project::ProjectMain::run()
 			auto selection_result = program_manager.SelectProgram("Shader", program_index);
 			if (selection_result.was_selection_changed) {
 				circle_rings.set_program(selection_result.program, set_uniforms);
-				second_branch.set_program(selection_result.program, set_uniforms);
+				//second_branch.set_program(selection_result.program, set_uniforms);
 			}
 			ImGui::Separator();
 			ImGui::Checkbox("Show control points", &show_control_points);
@@ -302,6 +315,7 @@ int main()
 	std::setlocale(LC_ALL, "");
 
 	Bonobo framework;
+
 
 	try {
 		project::ProjectMain projectMain(framework.GetWindowManager());

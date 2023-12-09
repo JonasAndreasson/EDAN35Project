@@ -5,19 +5,28 @@
 #include <stdio.h>
 #include <stack>
 #include <random>
+#include "LSystem.hpp"
 
-Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
+Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
 	// 
 	//s = "F-F+F";
 	if (s == "") return;
+
+
+	float delta_angle = system.angle;
 	float angle = 0;
-	float height = 2;
-	float radius = 0.5;
-	float down_scaling = 0.6f;
-	float down_scaling_height = 0.7f;
+
+	float height = system.height;
+	float radius = system.radius;
+	float down_scaling = system.down_scaling;
+	float down_scaling_height = system.down_scaling_height;
+	//float height = 2;
+	//float radius = 0.5f;
+	//float down_scaling = 0.6f;
+	//float down_scaling_height = 0.8f;
 	glm::vec3 position = start_pos;
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
 	std::stack<Branch*> stack;
@@ -44,21 +53,25 @@ Tree::Tree(const std::string s, const glm::vec3 start_pos ,const GLuint* program
 			height *= down_scaling_height;
 			break;
 		case '-':
-			
-			angle -= glm::quarter_pi<float>();
+			angle -= delta_angle;
+
+			//angle -= glm::quarter_pi<float>();
 
 			//angle -= (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
-			std::cout << "Angle:" << angle << '\n';
+			//std::cout << "Angle:" << angle << '\n';
 			break;
 		case '+':
-			angle += glm::quarter_pi<float>();
-	
+			angle += delta_angle;
+
+			//angle += glm::quarter_pi<float>();
+			
 			//angle += (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 			break;
 		case '[':
 			stack.push(b);
 				break;
 		case ']':
+			//Branch done, here we can add leaves before jumping back to branch on stack
 			b = stack.top();
 			height = b->h;
 			position = b->get_end() + glm::vec3(0, height * 0.05, 0);

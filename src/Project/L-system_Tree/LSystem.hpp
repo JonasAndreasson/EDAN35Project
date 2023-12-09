@@ -16,6 +16,16 @@ public:
 	//! map storing axiom data.
 	std::map<char, std::string> axioms;
 
+	//! best angle for this system
+	float angle = glm::quarter_pi<float>();
+	//! best starting branch height for this system
+	float height = 2;
+	//! best angle for this system
+	float radius = 0.5f;
+	//! best angle for this system
+	float down_scaling = 0.6f;
+	//! best angle for this system
+	float down_scaling_height = 0.8f;
 
 	//! \brief Add rules to the Axiom
 	//! 
