@@ -11,7 +11,8 @@
 #include "core/node.hpp"
 #include "core/opengl.hpp"
 #include "core/ShaderProgramManager.hpp"
-
+#include "Project/L-system_Tree/Tree.hpp"
+#include "Project/L-system_Tree/LSystem.hpp"
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -186,12 +187,33 @@ void
 edan35::Assignment2::run()
 {
 	// Load the geometry of Sponza
-	auto const sponza_geometry = bonobo::loadObjects(config::resources_path("sponza/sponza.obj"));
-	if (sponza_geometry.empty()) {
+	auto rw_sponza_geometry = bonobo::loadObjects(config::resources_path("sponza/sponza.obj"));
+	if (rw_sponza_geometry.empty()) {
 		LogError("Failed to load the Sponza model");
 		return;
 	}
-	
+	GLuint fallback_shader = 0u;
+	ShaderProgramManager program_manager;
+	program_manager.CreateAndRegisterProgram("Fallback",
+		{ { ShaderType::vertex, "common/fallback.vert" },
+		  { ShaderType::fragment, "common/fallback.frag" } },
+		fallback_shader);
+	if (fallback_shader == 0u) {
+		LogError("Failed to load fallback shader");
+		return;
+	}
+	LSystem shrubby;
+	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
+	shrubby.angle = 0.4485496;
+	shrubby.radius = 0.005;
+	shrubby.height = 0.06;
+	shrubby.down_scaling = 0.9;
+	shrubby.down_scaling_height = 0.9;
+	std::string s = shrubby.ApplyAxioms("F", 5);
+	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u);
+	for (auto mesh : t.get_mesh()) rw_sponza_geometry.push_back(mesh);
+
+	auto const sponza_geometry = rw_sponza_geometry;
 	std::vector<GeometryTextureData> sponza_geometry_texture_data;
 	sponza_geometry_texture_data.reserve(sponza_geometry.size());
 	for (auto const& geometry : sponza_geometry) {
@@ -247,16 +269,8 @@ edan35::Assignment2::run()
 	//
 	// Load all the shader programs used
 	//
-	ShaderProgramManager program_manager;
-	GLuint fallback_shader = 0u;
-	program_manager.CreateAndRegisterProgram("Fallback",
-	                                         { { ShaderType::vertex, "common/fallback.vert" },
-	                                           { ShaderType::fragment, "common/fallback.frag" } },
-	                                         fallback_shader);
-	if (fallback_shader == 0u) {
-		LogError("Failed to load fallback shader");
-		return;
-	}
+	
+	
 
 	GLuint fill_gbuffer_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Fill G-Buffer",
