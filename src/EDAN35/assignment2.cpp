@@ -202,15 +202,17 @@ edan35::Assignment2::run()
 		LogError("Failed to load fallback shader");
 		return;
 	}
+
+	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
 	LSystem shrubby;
 	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
 	shrubby.angle = 0.4485496;
-	shrubby.radius = 0.005;
-	shrubby.height = 0.06;
+	shrubby.radius = 5;
+	shrubby.height = 6;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
 	std::string s = shrubby.ApplyAxioms("F", 5);
-	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u);
+	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture);
 	for (auto mesh : t.get_mesh()) rw_sponza_geometry.push_back(mesh);
 
 	auto const sponza_geometry = rw_sponza_geometry;
@@ -221,11 +223,13 @@ edan35::Assignment2::run()
 		auto const specular_texture = geometry.bindings.find("specular_texture");
 		auto const normals_texture = geometry.bindings.find("normals_texture");
 		auto const opacity_texture = geometry.bindings.find("opacity_texture");
-
 		GeometryTextureData data;
 		if (diffuse_texture != geometry.bindings.end())
 		{
 			data.diffuse_texture_id = diffuse_texture->second;
+		}
+		else {
+			std::cout << "Could not find the diffuse texture (for some reason) for " + geometry.name << '\n';
 		}
 		if (specular_texture != geometry.bindings.end())
 		{

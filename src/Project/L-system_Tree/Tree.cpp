@@ -45,7 +45,13 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			if (program != 0u) {
 				b->set_program(program, set_uniforms);
 			}
-			b->add_texture("bark", texture, GL_TEXTURE_2D);
+			if (texture != 0u) {
+			b->add_texture("diffuse_texture", texture, GL_TEXTURE_2D);
+			b->get_mesh().bindings.emplace("diffuse_texture", texture);
+			}
+			else {
+				std::cout << "Could not add the texture?" << '\n';
+			}
 			meshes.push_back(b->get_mesh());
 			add_child(b);
 			position = b->get_end()+glm::vec3(0,height*0.05,0);
