@@ -42,7 +42,9 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			//make branch
 			
 			b = new Branch(radius, height, position, angle, rotation, down_scaling, b);
-			b->set_program(program, set_uniforms);
+			if (program != 0u) {
+				b->set_program(program, set_uniforms);
+			}
 			b->add_texture("bark", texture, GL_TEXTURE_2D);
 			meshes.push_back(b->get_mesh());
 			add_child(b);
