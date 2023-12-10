@@ -1,0 +1,131 @@
+# Blender MTL File: 'Leaf set.blend'
+# Material Count: 10
+
+newmtl leaf_1
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.010396 0.010396 0.010396
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 1.png
+map_Bump -bm 0.042682 Textures\\leaf 1.png
+map_d  Textures\\leaf 1.png
+
+newmtl leaf_10
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.007426 0.007426 0.007426
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 10.png
+map_Bump -bm 0.024390 Textures\\leaf 10.png
+map_d  Textures\\leaf 10.png
+
+newmtl leaf_2
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.005446 0.005446 0.005446
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 2.png
+map_Bump -bm 0.140244 Textures\\leaf 2.png
+map_d  Textures\\leaf 2.png
+
+newmtl leaf_3
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.005941 0.005941 0.005941
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 3.png
+map_Bump -bm 0.091464 Textures\\leaf 3.png
+map_d  Textures\\leaf 3.png
+
+newmtl leaf_4
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.004950 0.004950 0.004950
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 4.png
+map_Bump -bm 0.073170 Textures\\leaf 4.png
+map_d  Textures\\leaf 4.png
+
+newmtl leaf_5
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.054455 0.054455 0.054455
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 5.png
+map_Bump -bm 0.231707 Textures\\leaf 5.png
+map_d  Textures\\leaf 5.png
+
+newmtl leaf_6
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.009406 0.009406 0.009406
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 6.png
+map_Bump -bm 0.146342 Textures\\leaf 6.png
+map_d  Textures\\leaf 6.png
+
+newmtl leaf_7
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.007426 0.007426 0.007426
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 7.png
+map_d  Textures\\leaf 7.png
+
+newmtl leaf_8
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.006436 0.006436 0.006436
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 8.png
+map_Bump -bm 0.097562 Textures\\leaf 8.png
+map_d  Textures\\leaf 8.png
+
+newmtl leaf_9
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.007921 0.007921 0.007921
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd Textures\leaf 9.png
+map_Bump -bm 0.195121 Textures\\leaf 9.png
+map_d  Textures\\leaf 9.png
