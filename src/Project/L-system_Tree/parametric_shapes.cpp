@@ -849,13 +849,17 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 	{
 		for (unsigned int j = 0u; j < vertical_slice_edges_count; ++j)
 		{
-			index_sets[index] = glm::uvec3(vertical_slice_vertices_count * (i + 0u) + (j + 0u),
-				vertical_slice_vertices_count * (i + 1u) + (j + 1u), vertical_slice_vertices_count * (i + 0u) + (j + 1u)
+			index_sets[index] = glm::uvec3(
+				vertical_slice_vertices_count * (i + 0u) + (j + 0u),
+				vertical_slice_vertices_count * (i + 0u) + (j + 1u),
+				vertical_slice_vertices_count * (i + 1u) + (j + 1u)
 			);
 			++index;
 
-			index_sets[index] = glm::uvec3(vertical_slice_vertices_count * (i + 0u) + (j + 0u),
-				vertical_slice_vertices_count * (i + 1u) + (j + 0u), vertical_slice_vertices_count * (i + 1u) + (j + 1u)
+			index_sets[index] = glm::uvec3(
+				vertical_slice_vertices_count * (i + 0u) + (j + 0u),
+				vertical_slice_vertices_count * (i + 1u) + (j + 1u),
+				vertical_slice_vertices_count * (i + 1u) + (j + 0u)
 			);
 			++index;
 		}
