@@ -213,14 +213,14 @@ project::ProjectMain::run()
 		config::resources_path("cubemaps/NissiBeach2/posz.jpg"),
 		config::resources_path("cubemaps/NissiBeach2/negz.jpg"));*/
 	GLuint ground_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_diffuse_4k.jpg"));
-	GLuint ground_disp_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_disp_4k"));
+	GLuint ground_disp_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_disp_4k.png"));
 	GLuint ground_normal_texture = bonobo::loadTexture2D(config::resources_path("textures/Ground/forest_leaves_02_nor_gl_4k.png"));
 
 	GLuint sky_texture = bonobo::loadTexture2D(config::resources_path("textures/sky/industrial_sunset_puresky.jpg"));
 	
 	// --- Shaders done 
 
-	auto skybox_shape = parametric_shapes::createSphere(100.0f, 100u, 100u);
+	auto skybox_shape = parametric_shapes::createSphere(20.0f, 100u, 100u);
 	if (skybox_shape.vao == 0u) {
 		LogError("Failed to retrieve the mesh for the skybox");
 		return;
@@ -231,14 +231,14 @@ project::ProjectMain::run()
 	skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 	skybox.set_program(&skybox_shader);
 
-	auto quad = parametric_shapes::createQuad(200, 200, 10000, 10000);
+	auto quad = parametric_shapes::createQuad(50, 50, 1000, 1000);
 	Node plane;
 	plane.set_geometry(quad);
 	plane.get_transform().SetTranslate(glm::vec3(0.0, 0, 0.0));
-	plane.set_program(&phong_shader, phong_set_uniforms);
+	plane.set_program(&texture_shader);
 	plane.add_texture("diff_texture", ground_diff_texture, GL_TEXTURE_2D);
 	
-	plane.add_texture("normal_texture", ground_normal_texture, GL_TEXTURE_2D);
+	//plane.add_texture("normal_texture", ground_normal_texture, GL_TEXTURE_2D);
 
 
 
