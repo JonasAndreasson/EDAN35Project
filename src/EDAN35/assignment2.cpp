@@ -191,6 +191,7 @@ edan35::Assignment2::run()
 		LogError("Failed to load the Sponza model");
 		return;
 	}
+	
 	std::vector<GeometryTextureData> sponza_geometry_texture_data;
 	sponza_geometry_texture_data.reserve(sponza_geometry.size());
 	for (auto const& geometry : sponza_geometry) {

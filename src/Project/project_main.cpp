@@ -247,7 +247,8 @@ project::ProjectMain::run()
 	//std::cout << s << '\n';
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
 	Tree tree = Tree(s, shrubby, glm::vec3(0, 0, 0),&texture_shader, bark_uniforms, tree_diff_texture);
-	
+	std::cout << tree.get_mesh().size() << '\n';
+	std::cout << tree.get_children_nb() << '\n';
 	//circle_rings.set_geometry(shape);
 	//circle_rings.set_program(&normal_shader, set_uniforms);
 	//TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();

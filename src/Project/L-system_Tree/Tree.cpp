@@ -44,6 +44,7 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			b = new Branch(radius, height, position, angle, rotation, down_scaling, b);
 			b->set_program(program, set_uniforms);
 			b->add_texture("bark", texture, GL_TEXTURE_2D);
+			meshes.push_back(b->get_mesh());
 			add_child(b);
 			position = b->get_end()+glm::vec3(0,height*0.05,0);
 			b->r = radius;
@@ -87,6 +88,9 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 		}
 	}
 }
+
+
+
 
 glm::vec3 Tree::get_pos() {
 	//return glm::vec3((transformed * glm::vec4(0.0f,0.0f,0.0f,1.0f)));
