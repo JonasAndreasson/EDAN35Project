@@ -24,7 +24,7 @@ public:
 	//! @param [in] diffuse_texture_id Identifier of the diffuse texture
 	//!             used (more details about it also in assignment~3)
 	Tree(const std::string s, LSystem system, const glm::vec3 start_pos, const GLuint* program, const std::function<void(GLuint)>& set_uniforms = [](GLuint) {}, const GLuint texture = 0u);
-	std::vector<bonobo::mesh_data> get_mesh() { return meshes; }
+	std::vector<bonobo::mesh_data>& get_mesh() { return meshes; }
 	//! \brief Configure the scale of this tree. ??
 	glm::vec3 get_pos();
 

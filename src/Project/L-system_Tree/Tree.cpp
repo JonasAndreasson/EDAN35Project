@@ -47,10 +47,13 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			}
 			if (texture != 0u) {
 			b->add_texture("diffuse_texture", texture, GL_TEXTURE_2D);
-			b->get_mesh().bindings.emplace("diffuse_texture", texture);
+			bool could_insert = b->get_mesh().bindings.emplace("diffuse_texture", texture).second;
+			std::cout << "Could insert: " << could_insert << '\n';
+			std::cout << "Size is now: " << b->get_mesh().bindings.size() << '\n';
+			
 			}
 			else {
-				std::cout << "Could not add the texture?" << '\n';
+				std::cout << "Texture not added" << '\n';
 			}
 			meshes.push_back(b->get_mesh());
 			add_child(b);

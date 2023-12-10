@@ -21,7 +21,7 @@ public:
 	Branch(float, float, glm::vec3, float, glm::vec3, float, Branch* b = nullptr);
 	const glm::vec3 get_start() { return start_pos; }
 	const glm::vec3 get_end() { return end_pos;  }
-	bonobo::mesh_data get_mesh() { return mesh; }
+	bonobo::mesh_data &get_mesh() { return mesh; }
 	float a;
 	float h;
 	float r;

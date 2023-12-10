@@ -213,7 +213,9 @@ edan35::Assignment2::run()
 	shrubby.down_scaling_height = 0.9;
 	std::string s = shrubby.ApplyAxioms("F", 5);
 	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture);
-	for (auto mesh : t.get_mesh()) rw_sponza_geometry.push_back(mesh);
+	for (auto mesh : t.get_mesh()) {
+		rw_sponza_geometry.push_back(mesh);
+	}
 
 	auto const sponza_geometry = rw_sponza_geometry;
 	std::vector<GeometryTextureData> sponza_geometry_texture_data;

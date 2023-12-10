@@ -246,6 +246,9 @@ project::ProjectMain::run()
 	std::string s = shrubby.ApplyAxioms("F", 5); //TODO: This could be done in tree...?
 	//std::cout << s << '\n';
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
+	if (tree_diff_texture == 0u) {
+		std::cout << "Couldn't load tree_diff_texture";
+	}
 	Tree tree = Tree(s, shrubby, glm::vec3(0, 0, 0),&texture_shader, bark_uniforms, tree_diff_texture);
 	std::cout << tree.get_mesh().size() << '\n';
 	std::cout << tree.get_children_nb() << '\n';
