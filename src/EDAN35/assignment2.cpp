@@ -51,6 +51,7 @@ namespace
 		GBufferWorldSpaceNormal,
 		LightDiffuseContribution,
 		LightSpecularContribution,
+		GodRays,
 		Result,
 		Count
 	};
@@ -138,7 +139,7 @@ namespace
 	};
 	void fillShadowmapShaderLocations(GLuint shadowmap_shader, FillShadowmapShaderLocations& locations);
 
-	struct AccumulateLightsShaderLocations
+	struct AccumulateLightsShaderLocations //These structs are used for different shader runs.
 	{
 		GLuint ubo_CameraViewProjTransforms{ 0u };
 		GLuint ubo_LightViewProjTransforms{ 0u };
@@ -276,7 +277,18 @@ edan35::Assignment2::run()
 	// Load all the shader programs used
 	//
 	
-	
+	GLuint god_rays_shader = 0u;
+	program_manager.CreateAndRegisterProgram("Generate God Rays",
+											{ { ShaderType::vertex, "EDAN35/fill_gbuffer.vert" },
+											  { ShaderType::fragment, "EDAN35/fill_gbuffer.frag" } },
+											god_rays_shader);
+	if (god_rays_shader == 0u) {
+		LogError("Failed to load God Rays shader");
+		return;
+	}
+	GBufferShaderLocations fill_god_rays_shader_locations;
+	fillGodRaysShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
+
 
 	GLuint fill_gbuffer_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Fill G-Buffer",
@@ -543,7 +555,77 @@ edan35::Assignment2::run()
 			glEndQuery(GL_TIME_ELAPSED);
 			utils::opengl::debug::endDebugGroup();
 
+			//Pass (2)
 
+			/*
+			utils::opengl::debug::beginDebugGroup("Create God Ray Texture");
+			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::GbufferGeneration)]);
+
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[toU(FBO::GBuffer)]);
+			glViewport(0, 0, framebuffer_width, framebuffer_height);
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT); //Color aswell seems to resolve the fragmentation. Think this is still required.
+
+			glUseProgram(fill_gbuffer_shader);
+			glUniform1i(fill_gbuffer_shader_locations.diffuse_texture, 0);
+			glUniform1i(fill_gbuffer_shader_locations.specular_texture, 1);
+			glUniform1i(fill_gbuffer_shader_locations.normals_texture, 2);
+			glUniform1i(fill_gbuffer_shader_locations.opacity_texture, 3);
+			for (std::size_t i = 0; i < sponza_geometry.size(); ++i)
+			{
+				auto const& geometry = sponza_geometry[i];
+				auto const& texture_data = sponza_geometry_texture_data[i];
+
+				utils::opengl::debug::beginDebugGroup(geometry.name);
+
+				auto const vertex_model_to_world = glm::mat4(1.0f);
+				auto const normal_model_to_world = glm::mat4(1.0f);
+
+				glUniformMatrix4fv(fill_gbuffer_shader_locations.vertex_model_to_world, 1, GL_FALSE, glm::value_ptr(vertex_model_to_world));
+				glUniformMatrix4fv(fill_gbuffer_shader_locations.normal_model_to_world, 1, GL_FALSE, glm::value_ptr(normal_model_to_world));
+
+				auto const default_sampler = samplers[toU(Sampler::Nearest)];
+				auto const mipmap_sampler = samplers[toU(Sampler::Mipmaps)];
+
+				glUniform1i(fill_gbuffer_shader_locations.has_diffuse_texture, texture_data.diffuse_texture_id != 0u ? 1 : 0);
+				glBindSampler(0u, texture_data.diffuse_texture_id != 0u ? mipmap_sampler : default_sampler);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture_data.diffuse_texture_id != 0u ? texture_data.diffuse_texture_id : debug_texture_id);
+
+				glUniform1i(fill_gbuffer_shader_locations.has_specular_texture, texture_data.specular_texture_id != 0u ? 1 : 0);
+				glBindSampler(1u, texture_data.specular_texture_id != 0u ? mipmap_sampler : default_sampler);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, texture_data.specular_texture_id != 0u ? texture_data.specular_texture_id : debug_texture_id);
+
+				glUniform1i(fill_gbuffer_shader_locations.has_normals_texture, texture_data.normals_texture_id != 0u ? 1 : 0);
+				glBindSampler(2u, texture_data.normals_texture_id != 0u ? mipmap_sampler : default_sampler);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, texture_data.normals_texture_id != 0u ? texture_data.normals_texture_id : debug_texture_id);
+
+				glUniform1i(fill_gbuffer_shader_locations.has_opacity_texture, texture_data.opacity_texture_id != 0u ? 1 : 0);
+				glBindSampler(3u, texture_data.opacity_texture_id != 0u ? mipmap_sampler : default_sampler);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, texture_data.opacity_texture_id != 0u ? texture_data.opacity_texture_id : debug_texture_id);
+				
+				glBindVertexArray(geometry.vao);
+				if (geometry.ibo != 0u)
+					glDrawElements(geometry.drawing_mode, geometry.indices_nb, GL_UNSIGNED_INT, reinterpret_cast<GLvoid const*>(0x0));
+				else
+					glDrawArrays(geometry.drawing_mode, 0, geometry.vertices_nb);
+
+
+				utils::opengl::debug::endDebugGroup();
+			}
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0u);
+			glUseProgram(0u);
+
+			glEndQuery(GL_TIME_ELAPSED);
+			utils::opengl::debug::endDebugGroup();
+
+
+
+
+			*/
 
 			//
 			// Pass 2: Generate shadowmaps and accumulate lights' contribution
@@ -920,6 +1002,10 @@ Textures createTextures(GLsizei framebuffer_width, GLsizei framebuffer_height)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebuffer_width, framebuffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	utils::opengl::debug::nameObject(GL_TEXTURE, textures[toU(Texture::LightSpecularContribution)], "Light specular contribution");
 
+	glBindTexture(GL_TEXTURE_2D, textures[toU(Texture::GodRays)]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebuffer_width, framebuffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	utils::opengl::debug::nameObject(GL_TEXTURE, textures[toU(Texture::GodRays)], "God Rays");
+
 	glBindTexture(GL_TEXTURE_2D, textures[toU(Texture::Result)]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebuffer_width, framebuffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	utils::opengl::debug::nameObject(GL_TEXTURE, textures[toU(Texture::Result)], "Final result");
@@ -1076,6 +1162,25 @@ UBOs createUniformBufferObjects()
 	glBindBuffer(GL_UNIFORM_BUFFER, 0u);
 	return ubos;
 }
+
+void fillGodRaysShaderLocations(GLuint gbuffer_shader, GBufferShaderLocations& locations)
+{
+	locations.ubo_CameraViewProjTransforms = glGetUniformBlockIndex(gbuffer_shader, "CameraViewProjTransforms");
+	locations.vertex_model_to_world = glGetUniformLocation(gbuffer_shader, "vertex_model_to_world");
+	locations.normal_model_to_world = glGetUniformLocation(gbuffer_shader, "normal_model_to_world");
+	locations.diffuse_texture = glGetUniformLocation(gbuffer_shader, "diffuse_texture");
+	locations.specular_texture = glGetUniformLocation(gbuffer_shader, "specular_texture");
+	locations.normals_texture = glGetUniformLocation(gbuffer_shader, "normals_texture");
+	locations.opacity_texture = glGetUniformLocation(gbuffer_shader, "opacity_texture");
+	locations.has_diffuse_texture = glGetUniformLocation(gbuffer_shader, "has_diffuse_texture");
+	locations.has_specular_texture = glGetUniformLocation(gbuffer_shader, "has_specular_texture");
+	locations.has_normals_texture = glGetUniformLocation(gbuffer_shader, "has_normals_texture");
+	locations.has_opacity_texture = glGetUniformLocation(gbuffer_shader, "has_opacity_texture");
+
+	glUniformBlockBinding(gbuffer_shader, locations.ubo_CameraViewProjTransforms, toU(UBO::CameraViewProjTransforms));
+
+}
+
 
 void fillGBufferShaderLocations(GLuint gbuffer_shader, GBufferShaderLocations& locations)
 {
