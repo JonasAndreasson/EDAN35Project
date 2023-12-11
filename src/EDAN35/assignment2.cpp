@@ -11,6 +11,7 @@
 #include "core/node.hpp"
 #include "core/opengl.hpp"
 #include "core/ShaderProgramManager.hpp"
+#include "Project/L-system_Tree/parametric_shapes.hpp"
 #include "Project/L-system_Tree/Tree.hpp"
 #include "Project/L-system_Tree/LSystem.hpp"
 #include <imgui.h>
@@ -159,6 +160,7 @@ namespace
 		GLuint depth_texture{ 0u };
 		GLuint normal_texture{ 0u };
 		GLuint shadow_texture{ 0u };
+		GLuint godray_texture{ 0u };
 		GLuint camera_position{ 0u };
 		GLuint inverse_screen_resolution{ 0u };
 		GLuint light_color{ 0u };
@@ -198,6 +200,8 @@ edan35::Assignment2::run()
 {
 	// Load the geometry of Sponza
 	auto rw_sponza_geometry = bonobo::loadObjects(config::resources_path("sponza/sponza.obj"));
+
+	
 	if (rw_sponza_geometry.empty()) {
 		LogError("Failed to load the Sponza model");
 		return;
@@ -212,7 +216,6 @@ edan35::Assignment2::run()
 		LogError("Failed to load fallback shader");
 		return;
 	}
-
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
 	LSystem shrubby;
 	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
@@ -576,8 +579,6 @@ edan35::Assignment2::run()
 			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT); //Color aswell seems to resolve the fragmentation. Think this is still required.
 
 			glUseProgram(god_rays_shader);
-			//Here we should draw the sun to the buffer.
-
 
 			for (std::size_t i = 0; i < sponza_geometry.size(); ++i) //This draws everything in the sceen as black blocks ontop of our white bg.
 			{
@@ -608,7 +609,6 @@ edan35::Assignment2::run()
 
 			glEndQuery(GL_TIME_ELAPSED);
 			utils::opengl::debug::endDebugGroup();
-
 
 
 
@@ -715,6 +715,12 @@ edan35::Assignment2::run()
 				glUniform1i(accumulate_light_shader_locations.shadow_texture, 2);
 				glBindSampler(2, samplers[toU(Sampler::Linear)]);
 
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, textures[toU(Texture::GodRays)]);
+				glUniform1i(accumulate_light_shader_locations.godray_texture, 3);
+				glBindSampler(2, samplers[toU(Sampler::Linear)]);
+
+				
 				glBindVertexArray(cone_geometry.vao);
 				glDrawArrays(cone_geometry.drawing_mode, 0, cone_geometry.vertices_nb);
 
@@ -810,7 +816,7 @@ edan35::Assignment2::run()
 		// Output content of the g-buffer as well as of the shadowmap, for debugging purposes
 		//
 		if (show_textures) {
-			bonobo::displayTexture({-0.95f, -0.95f}, {-0.55f, -0.55f}, textures[toU(Texture::GBufferDiffuse)],            samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
+			bonobo::displayTexture({-0.95f, -0.95f}, {-0.55f, -0.55f}, textures[toU(Texture::GodRays)],            samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({-0.45f, -0.95f}, {-0.05f, -0.55f}, textures[toU(Texture::GBufferSpecular)],           samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({ 0.05f, -0.95f}, { 0.45f, -0.55f}, textures[toU(Texture::GBufferWorldSpaceNormal)],   samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({ 0.55f, -0.95f}, { 0.95f, -0.55f}, textures[toU(Texture::DepthBuffer)],               samplers[toU(Sampler::Linear)], {0, 0, 0, -1}, glm::uvec2(framebuffer_width, framebuffer_height), true, mCamera.mNear, mCamera.mFar);
@@ -1211,6 +1217,7 @@ void fillAccumulateLightsShaderLocations(GLuint accumulate_lights_shader, Accumu
 	locations.depth_texture = glGetUniformLocation(accumulate_lights_shader, "depth_texture");
 	locations.normal_texture = glGetUniformLocation(accumulate_lights_shader, "normal_texture");
 	locations.shadow_texture = glGetUniformLocation(accumulate_lights_shader, "shadow_texture");
+	locations.godray_texture = glGetUniformLocation(accumulate_lights_shader, "godray_texture");
 	locations.camera_position = glGetUniformLocation(accumulate_lights_shader, "camera_position");
 	locations.inverse_screen_resolution = glGetUniformLocation(accumulate_lights_shader, "inverse_screen_resolution");
 	locations.light_color = glGetUniformLocation(accumulate_lights_shader, "light_color");
