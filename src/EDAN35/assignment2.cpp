@@ -116,13 +116,6 @@ namespace
 		GLuint opacity_texture_id{ 0u };
 	};
 
-	struct GodRaysShaderLocations
-	{
-		GLuint ubo_CameraViewProjTransforms{ 0u };
-		GLuint vertex_model_to_world{ 0u };
-		GLuint normal_model_to_world{ 0u };
-	};
-	void fillGodRaysShaderLocations(GLuint gbuffer_shader, GodRaysShaderLocations& locations);
 	struct GBufferShaderLocations
 	{
 		GLuint ubo_CameraViewProjTransforms{ 0u };
@@ -220,7 +213,7 @@ edan35::Assignment2::run()
 	sun.name = "Sun";
 	std::string s = shrubby.ApplyAxioms("F", 5);
 
-	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture); //TODO: måste denna kanske kallas/ binda med namnet "diffuse_texture" för att matcha sponza rendering?
+	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture);
 
 
 	//TODO: add tree to existing sponza geometry??
@@ -333,9 +326,9 @@ edan35::Assignment2::run()
 		return;
 	}
 
-	GodRaysShaderLocations fill_god_rays_shader_locations;
-	fillGodRaysShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
-	fillGodRaysShaderLocations(god_rays_white_shader, fill_god_rays_shader_locations);
+	GBufferShaderLocations fill_god_rays_shader_locations;
+	fillGBufferShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
+	fillGBufferShaderLocations(god_rays_white_shader, fill_god_rays_shader_locations);
 
 
 	GLuint fill_shadowmap_shader = 0u;
@@ -481,7 +474,7 @@ edan35::Assignment2::run()
 			else
 			{
 				fillGBufferShaderLocations(fill_gbuffer_shader, fill_gbuffer_shader_locations);
-				fillGodRaysShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
+				fillGBufferShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
 				fillShadowmapShaderLocations(fill_shadowmap_shader, fill_shadowmap_shader_locations);
 				fillAccumulateLightsShaderLocations(accumulate_lights_shader, accumulate_light_shader_locations);
 			}
@@ -528,6 +521,55 @@ edan35::Assignment2::run()
 			//
 			// Pass 1: Render scene into the g-buffer
 			//
+						//Pass Generate the godrays
+
+			utils::opengl::debug::beginDebugGroup("Create God Ray Texture");
+			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::GodRays)]);
+
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[toU(FBO::GodRays)]);
+			glViewport(0, 0, framebuffer_width, framebuffer_height);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glUseProgram(god_rays_shader);
+			for (std::size_t i = 0; i < sponza_geometry.size(); ++i)
+			{
+				auto const& geometry = sponza_geometry[i];
+				auto const& texture_data = sponza_geometry_texture_data[i];
+				if (geometry.name == "Sun") {
+					glUseProgram(0u);
+					glUseProgram(god_rays_white_shader);
+				}
+				utils::opengl::debug::beginDebugGroup(geometry.name);
+
+				auto const vertex_model_to_world = glm::mat4(1.0f);
+				auto const normal_model_to_world = glm::mat4(1.0f);
+
+				glUniformMatrix4fv(fill_god_rays_shader_locations.vertex_model_to_world, 1, GL_FALSE, glm::value_ptr(vertex_model_to_world));
+				glUniformMatrix4fv(fill_god_rays_shader_locations.normal_model_to_world, 1, GL_FALSE, glm::value_ptr(normal_model_to_world));
+
+
+				glBindVertexArray(geometry.vao);
+				if (geometry.ibo != 0u)
+					glDrawElements(geometry.drawing_mode, geometry.indices_nb, GL_UNSIGNED_INT, reinterpret_cast<GLvoid const*>(0x0));
+				else
+					glDrawArrays(geometry.drawing_mode, 0, geometry.vertices_nb);
+
+				if (geometry.name == "Sun") {
+					glUseProgram(0u);
+					glUseProgram(god_rays_shader);
+				}
+				utils::opengl::debug::endDebugGroup();
+			}
+			glBindTexture(GL_TEXTURE_2D, 0); //unbinds everythíng.
+			glBindVertexArray(0u);
+			glUseProgram(0u);
+
+			glEndQuery(GL_TIME_ELAPSED);
+			utils::opengl::debug::endDebugGroup();
+
+
+
+
+
 			utils::opengl::debug::beginDebugGroup("Fill G-buffer");
 			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::GbufferGeneration)]);
 
@@ -545,7 +587,7 @@ edan35::Assignment2::run()
 			{
 				auto const& geometry = sponza_geometry[i];
 				auto const& texture_data = sponza_geometry_texture_data[i];
-
+				if (geometry.name == "Sun")continue;
 				utils::opengl::debug::beginDebugGroup(geometry.name);
 
 				auto const vertex_model_to_world = glm::mat4(1.0f);
@@ -587,52 +629,6 @@ edan35::Assignment2::run()
 				utils::opengl::debug::endDebugGroup();
 			}
 			glBindTexture(GL_TEXTURE_2D, 0);
-			glBindVertexArray(0u);
-			glUseProgram(0u);
-
-			glEndQuery(GL_TIME_ELAPSED);
-			utils::opengl::debug::endDebugGroup();
-
-			//Pass Generate the godrays
-
-			
-			utils::opengl::debug::beginDebugGroup("Create God Ray Texture");
-			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::GodRays)]);
-
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[toU(FBO::GodRays)]);
-			glViewport(0, 0, framebuffer_width, framebuffer_height);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glUseProgram(god_rays_shader);
-			for (std::size_t i = 0; i < sponza_geometry.size(); ++i) 
-			{
-				auto const& geometry = sponza_geometry[i];
-				auto const& texture_data = sponza_geometry_texture_data[i];
-				if (geometry.name == "Sun") {
-					glUseProgram(0u);
-					glUseProgram(god_rays_white_shader);
-				}
-				utils::opengl::debug::beginDebugGroup(geometry.name);
-
-				auto const vertex_model_to_world = glm::mat4(1.0f);
-				auto const normal_model_to_world = glm::mat4(1.0f);
-
-				glUniformMatrix4fv(fill_god_rays_shader_locations.vertex_model_to_world, 1, GL_FALSE, glm::value_ptr(vertex_model_to_world));
-				glUniformMatrix4fv(fill_god_rays_shader_locations.normal_model_to_world, 1, GL_FALSE, glm::value_ptr(normal_model_to_world));
-
-			
-				glBindVertexArray(geometry.vao);
-				if (geometry.ibo != 0u)
-					glDrawElements(geometry.drawing_mode, geometry.indices_nb, GL_UNSIGNED_INT, reinterpret_cast<GLvoid const*>(0x0));
-				else
-					glDrawArrays(geometry.drawing_mode, 0, geometry.vertices_nb);
-
-				if (geometry.name == "Sun") {
-					glUseProgram(0u);
-					glUseProgram(god_rays_shader);
-				}
-				utils::opengl::debug::endDebugGroup();
-			}
-			glBindTexture(GL_TEXTURE_2D, 0); //unbinds everythíng.
 			glBindVertexArray(0u);
 			glUseProgram(0u);
 
@@ -1099,6 +1095,7 @@ FBOs createFramebufferObjects(Textures const& textures)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbos[toU(FBO::GodRays)]);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textures[toU(Texture::GodRays)], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textures[toU(Texture::DepthBuffer)], 0);
 	glReadBuffer(GL_NONE); // Disable reading back from the colour attachments, as unnecessary in this assignment.
 	std::array<GLenum, 1> const godrays_draws = {
 		GL_COLOR_ATTACHMENT0, // The fragment shader output at location 0 will be written to colour attachment 0 (i.e. the diffuse texture).
@@ -1204,15 +1201,6 @@ UBOs createUniformBufferObjects()
 	return ubos;
 }
 
-void fillGodRaysShaderLocations(GLuint gray_shader, GodRaysShaderLocations& locations)
-{
-	locations.ubo_CameraViewProjTransforms = glGetUniformBlockIndex(gray_shader, "CameraViewProjTransforms");
-	locations.vertex_model_to_world = glGetUniformLocation(gray_shader, "vertex_model_to_world");
-	locations.normal_model_to_world = glGetUniformLocation(gray_shader, "normal_model_to_world");
-
-	glUniformBlockBinding(gray_shader, locations.ubo_CameraViewProjTransforms, toU(UBO::CameraViewProjTransforms));
-
-}
 
 
 void fillGBufferShaderLocations(GLuint gbuffer_shader, GBufferShaderLocations& locations)
