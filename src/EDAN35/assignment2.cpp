@@ -208,12 +208,13 @@ edan35::Assignment2::run()
 	shrubby.height = 6;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
-	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u);
+	glm::vec3 sun_position = glm::vec3(0.0f,400.0f, 0.0f);
+	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
 	sun.material.opacity = 0;
 	sun.name = "Sun";
 	std::string s = shrubby.ApplyAxioms("F", 5);
 
-	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture);
+	Tree t = Tree(s, shrubby,glm::vec3(400,0,0),0u,[](GLuint) {},tree_diff_texture);
 
 
 	//TODO: add tree to existing sponza geometry??
@@ -775,12 +776,15 @@ edan35::Assignment2::run()
 			glUseProgram(resolve_deferred_shader);
 			glViewport(0, 0, framebuffer_width, framebuffer_height);
 			// XXX: Is any clearing needed?
-
+			glUniform2f(glGetUniformLocation(resolve_deferred_shader, "inverse_screen_resolution"),
+				1.0f / static_cast<float>(framebuffer_width),
+				1.0f / static_cast<float>(framebuffer_height));
+			glUniform3fv(glGetUniformLocation(resolve_deferred_shader, "sun_position"), 1,glm::value_ptr(sun_position));
 			bind_texture_with_sampler(GL_TEXTURE_2D, 0, resolve_deferred_shader, "diffuse_texture", textures[toU(Texture::GBufferDiffuse)], samplers[toU(Sampler::Nearest)]);
 			bind_texture_with_sampler(GL_TEXTURE_2D, 1, resolve_deferred_shader, "specular_texture", textures[toU(Texture::GBufferSpecular)], samplers[toU(Sampler::Nearest)]);
 			bind_texture_with_sampler(GL_TEXTURE_2D, 2, resolve_deferred_shader, "light_d_texture", textures[toU(Texture::LightDiffuseContribution)], samplers[toU(Sampler::Nearest)]);
 			bind_texture_with_sampler(GL_TEXTURE_2D, 3, resolve_deferred_shader, "light_s_texture", textures[toU(Texture::LightSpecularContribution)], samplers[toU(Sampler::Nearest)]);
-
+			bind_texture_with_sampler(GL_TEXTURE_2D, 3, resolve_deferred_shader, "godray_texture", textures[toU(Texture::GodRays)], samplers[toU(Sampler::Nearest)]);
 			bonobo::drawFullscreen();
 
 			glBindSampler(3, 0u);

@@ -126,7 +126,7 @@ parametric_shapes::createQuad(float const width, float const height,
 bonobo::mesh_data
 parametric_shapes::createSphere(float const radius,
 	unsigned int const longitude_split_count,
-	unsigned int const latitude_split_count)
+	unsigned int const latitude_split_count, glm::vec3 start_position)
 {
 
 	auto const circle_slice_edges_count = longitude_split_count + 1u;
@@ -157,7 +157,7 @@ parametric_shapes::createSphere(float const radius,
 			vertices[index] = glm::vec3(
 				radius*sin_theta*sin_phi,
 				-radius*cos_phi,
-				radius*sin_phi*cos_theta);
+				radius*sin_phi*cos_theta) + start_position;
 
 			// texture coordinates
 			texcoords[index] = glm::vec3(

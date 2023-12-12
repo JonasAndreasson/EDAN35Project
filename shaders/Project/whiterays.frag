@@ -6,5 +6,5 @@ out vec4 color;
 
 void main(void)
 {
-	color = vec4(255,255,255,1); //Colour everything white	
+	color = vec4(0.99, 0.72, 0.07,1); //FLOAT VALUES
 }

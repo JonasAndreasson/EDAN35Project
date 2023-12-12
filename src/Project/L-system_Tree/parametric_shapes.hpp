@@ -44,7 +44,7 @@ namespace parametric_shapes
 	//!         data
 	bonobo::mesh_data createSphere(float const radius,
 	                               unsigned int const longitude_split_count,
-	                               unsigned int const latitude_split_count);
+	                               unsigned int const latitude_split_count, glm::vec3 start_position);
 
 	//! \brief Create a cylinder for a given tesselation level and make it
 	//!        available to OpenGL.
