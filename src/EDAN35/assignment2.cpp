@@ -206,16 +206,7 @@ edan35::Assignment2::run()
 		LogError("Failed to load the Sponza model");
 		return;
 	}
-	GLuint fallback_shader = 0u;
-	ShaderProgramManager program_manager;
-	program_manager.CreateAndRegisterProgram("Fallback",
-		{ { ShaderType::vertex, "common/fallback.vert" },
-		  { ShaderType::fragment, "common/fallback.frag" } },
-		fallback_shader);
-	if (fallback_shader == 0u) {
-		LogError("Failed to load fallback shader");
-		return;
-	}
+	
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
 	LSystem shrubby;
 	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
@@ -224,12 +215,15 @@ edan35::Assignment2::run()
 	shrubby.height = 6;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
+	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u);
+	sun.material.opacity = 0;
+	sun.name = "Sun";
 	std::string s = shrubby.ApplyAxioms("F", 5);
 	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture);
 	for (auto mesh : t.get_mesh()) {
 		rw_sponza_geometry.push_back(mesh);
 	}
-
+	rw_sponza_geometry.push_back(sun);
 	auto const sponza_geometry = rw_sponza_geometry;
 	std::vector<GeometryTextureData> sponza_geometry_texture_data;
 	sponza_geometry_texture_data.reserve(sponza_geometry.size());
@@ -288,19 +282,19 @@ edan35::Assignment2::run()
 	//
 	// Load all the shader programs used
 	//
-	
-	GLuint god_rays_shader = 0u;
-	program_manager.CreateAndRegisterProgram("Generate God Rays",
-											{ { ShaderType::vertex, "Project/godrays.vert" },
-											  { ShaderType::fragment, "Project/godrays.frag" } },
-											god_rays_shader);
-	if (god_rays_shader == 0u) {
-		LogError("Failed to load God Rays shader");
+	ShaderProgramManager program_manager;
+	GLuint fallback_shader = 0u;
+	program_manager.CreateAndRegisterProgram("Fallback",
+		{ { ShaderType::vertex, "common/fallback.vert" },
+		  { ShaderType::fragment, "common/fallback.frag" } },
+		fallback_shader);
+	if (fallback_shader == 0u) {
+		LogError("Failed to load fallback shader");
 		return;
 	}
-	GodRaysShaderLocations fill_god_rays_shader_locations;
-	fillGodRaysShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
 
+
+	
 
 	GLuint fill_gbuffer_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Fill G-Buffer",
@@ -313,6 +307,30 @@ edan35::Assignment2::run()
 	}
 	GBufferShaderLocations fill_gbuffer_shader_locations;
 	fillGBufferShaderLocations(fill_gbuffer_shader, fill_gbuffer_shader_locations);
+	
+	GLuint god_rays_shader = 0u;
+	program_manager.CreateAndRegisterProgram("Generate God Rays",
+		{ { ShaderType::vertex, "Project/godrays.vert" },
+		  { ShaderType::fragment, "Project/godrays.frag" } },
+		god_rays_shader);
+	if (god_rays_shader == 0u) {
+		LogError("Failed to load God Rays shader");
+		return;
+	}
+	GLuint god_rays_white_shader = 0u;
+	program_manager.CreateAndRegisterProgram("Generate God Rays",
+		{ { ShaderType::vertex, "Project/godrays.vert" },
+		  { ShaderType::fragment, "Project/whiterays.frag" } },
+		god_rays_white_shader);
+	if (god_rays_white_shader == 0u) {
+		LogError("Failed to load God Rays shader");
+		return;
+	}
+
+	GodRaysShaderLocations fill_god_rays_shader_locations;
+	fillGodRaysShaderLocations(god_rays_shader, fill_god_rays_shader_locations);
+	fillGodRaysShaderLocations(god_rays_white_shader, fill_god_rays_shader_locations);
+
 
 	GLuint fill_shadowmap_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Fill shadow map",
@@ -376,6 +394,7 @@ edan35::Assignment2::run()
 	//
 	// Setup lights properties
 	//
+	
 	std::array<TRSTransformf, constant::lights_nb> lightTransforms;
 	std::array<glm::vec3, constant::lights_nb> lightColors;
 	int lights_nb = static_cast<int>(constant::lights_nb);
@@ -576,15 +595,16 @@ edan35::Assignment2::run()
 
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[toU(FBO::GodRays)]);
 			glViewport(0, 0, framebuffer_width, framebuffer_height);
-			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT); //Color aswell seems to resolve the fragmentation. Think this is still required.
-
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glUseProgram(god_rays_shader);
-
-			for (std::size_t i = 0; i < sponza_geometry.size(); ++i) //This draws everything in the sceen as black blocks ontop of our white bg.
+			for (std::size_t i = 0; i < sponza_geometry.size(); ++i) 
 			{
 				auto const& geometry = sponza_geometry[i];
 				auto const& texture_data = sponza_geometry_texture_data[i];
-
+				if (geometry.name == "Sun") {
+					glUseProgram(0u);
+					glUseProgram(god_rays_white_shader);
+				}
 				utils::opengl::debug::beginDebugGroup(geometry.name);
 
 				auto const vertex_model_to_world = glm::mat4(1.0f);
@@ -600,7 +620,10 @@ edan35::Assignment2::run()
 				else
 					glDrawArrays(geometry.drawing_mode, 0, geometry.vertices_nb);
 
-
+				if (geometry.name == "Sun") {
+					glUseProgram(0u);
+					glUseProgram(god_rays_shader);
+				}
 				utils::opengl::debug::endDebugGroup();
 			}
 			glBindTexture(GL_TEXTURE_2D, 0); //unbinds everythíng.
@@ -942,6 +965,10 @@ edan35::Assignment2::run()
 	fill_shadowmap_shader = 0u;
 	glDeleteProgram(fill_gbuffer_shader);
 	fill_gbuffer_shader = 0u;
+	glDeleteProgram(god_rays_shader);
+	god_rays_shader = 0u;
+	glDeleteProgram(god_rays_white_shader);
+	god_rays_white_shader = 0u;
 	glDeleteProgram(fallback_shader);
 	fallback_shader = 0u;
 }
@@ -1062,7 +1089,7 @@ FBOs createFramebufferObjects(Textures const& textures)
 	glBindFramebuffer(GL_FRAMEBUFFER, fbos[toU(FBO::GodRays)]);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textures[toU(Texture::GodRays)], 0);
 	glReadBuffer(GL_NONE); // Disable reading back from the colour attachments, as unnecessary in this assignment.
-	std::array<GLenum, 3> const godrays_draws = {
+	std::array<GLenum, 1> const godrays_draws = {
 		GL_COLOR_ATTACHMENT0, // The fragment shader output at location 0 will be written to colour attachment 0 (i.e. the diffuse texture).
 	};
 	glDrawBuffers(static_cast<GLsizei>(godrays_draws.size()), godrays_draws.data());
@@ -1166,13 +1193,13 @@ UBOs createUniformBufferObjects()
 	return ubos;
 }
 
-void fillGodRaysShaderLocations(GLuint gbuffer_shader, GodRaysShaderLocations& locations)
+void fillGodRaysShaderLocations(GLuint gray_shader, GodRaysShaderLocations& locations)
 {
-	locations.ubo_CameraViewProjTransforms = glGetUniformBlockIndex(gbuffer_shader, "CameraViewProjTransforms");
-	locations.vertex_model_to_world = glGetUniformLocation(gbuffer_shader, "vertex_model_to_world");
-	locations.normal_model_to_world = glGetUniformLocation(gbuffer_shader, "normal_model_to_world");
+	locations.ubo_CameraViewProjTransforms = glGetUniformBlockIndex(gray_shader, "CameraViewProjTransforms");
+	locations.vertex_model_to_world = glGetUniformLocation(gray_shader, "vertex_model_to_world");
+	locations.normal_model_to_world = glGetUniformLocation(gray_shader, "normal_model_to_world");
 
-	glUniformBlockBinding(gbuffer_shader, locations.ubo_CameraViewProjTransforms, toU(UBO::CameraViewProjTransforms));
+	glUniformBlockBinding(gray_shader, locations.ubo_CameraViewProjTransforms, toU(UBO::CameraViewProjTransforms));
 
 }
 
