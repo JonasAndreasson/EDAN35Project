@@ -219,7 +219,11 @@ edan35::Assignment2::run()
 	sun.material.opacity = 0;
 	sun.name = "Sun";
 	std::string s = shrubby.ApplyAxioms("F", 5);
-	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture);
+
+	Tree t = Tree(s, shrubby,glm::vec3(0,0,0),0u,[](GLuint) {},tree_diff_texture); //TODO: måste denna kanske kallas/ binda med namnet "diffuse_texture" för att matcha sponza rendering?
+
+
+	//TODO: add tree to existing sponza geometry??
 	for (auto mesh : t.get_mesh()) {
 		rw_sponza_geometry.push_back(mesh);
 	}
@@ -227,6 +231,8 @@ edan35::Assignment2::run()
 	auto const sponza_geometry = rw_sponza_geometry;
 	std::vector<GeometryTextureData> sponza_geometry_texture_data;
 	sponza_geometry_texture_data.reserve(sponza_geometry.size());
+
+	// Render sponza items with textures?
 	for (auto const& geometry : sponza_geometry) {
 		auto const diffuse_texture = geometry.bindings.find("diffuse_texture");
 		auto const specular_texture = geometry.bindings.find("specular_texture");
@@ -914,6 +920,11 @@ edan35::Assignment2::run()
 
 		opened = ImGui::Begin("Scene Controls", nullptr, ImGuiWindowFlags_None);
 		if (opened) {
+			// TODO: Some control variables.
+			// Maybe ability to choose between some forest geometry  (different pre-computed & saved alt sponza objects.), would require re-computing and rendering everything tho...
+			// Movement for sun, speed, pause
+			// Sun variables, brightness, fake cloudiness?
+
 			ImGui::Checkbox("Pause lights", &are_lights_paused);
 			ImGui::SliderInt("Number of lights", &lights_nb, 1, static_cast<int>(constant::lights_nb));
 			ImGui::Checkbox("Show textures", &show_textures);
