@@ -20,6 +20,9 @@
 #include <cstdlib>
 #include <stdexcept>
 #include "L-system_Tree/Tree.hpp"
+#include <random>
+
+
 
 project::ProjectMain::ProjectMain(WindowManager& windowManager) :
 	mCamera(0.5f * glm::half_pi<float>(),
@@ -43,8 +46,7 @@ project::ProjectMain::~ProjectMain()
 }
 
 
-void
-project::ProjectMain::run()
+void project::ProjectMain::run()
 {
 
 	
@@ -63,6 +65,7 @@ project::ProjectMain::run()
 		LSystem fractalSys;
 		fractalSys.AddAxiom('F', "F[-F][+F]");
 		fractalSys.angle = 0.4485496;
+		//using default values
 
 		LSystem shrubby;
 		shrubby.AddAxiom('F', "F[+F]F[-F][F]");
@@ -75,10 +78,12 @@ project::ProjectMain::run()
 		LSystem treeSys1;
 		treeSys1.AddAxiom('F', "F-[-F+F+F]+[+F-F-F]");
 		treeSys1.angle = 0.3926991;
+		//using default values
 
 		LSystem treeSys2;
 		treeSys2.AddAxiom('F', "F[-F+F+F][+F-F-F]");
 		treeSys2.angle = 0.3926991;
+		//using default values
 	
 
 
@@ -222,44 +227,128 @@ project::ProjectMain::run()
 	
 	// --- Shaders done 
 
-	auto skybox_shape = parametric_shapes::createSphere(100.0f, 100u, 100u,glm::vec3(0.0f));
+	float scene_radius = 100.0f;
+
+	auto skybox_shape = parametric_shapes::createSphere(scene_radius, 100u, 100u,glm::vec3(0.0f));
 	if (skybox_shape.vao == 0u) {
 		LogError("Failed to retrieve the mesh for the skybox");
 		return;
 	}
+	skybox_shape.bindings.emplace("diffuse_texture", sky_texture);
+
+
 
 	Node skybox;
 	skybox.set_geometry(skybox_shape);
-	skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
+	//skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 	skybox.set_program(&skybox_shader);
 
 	auto quad = parametric_shapes::createQuad(50, 50, 1000, 1000);
+	quad.bindings.emplace("diffuse_texture", ground_diff_texture);
+
+
 	Node plane;
 	plane.set_geometry(quad);
 	plane.get_transform().SetTranslate(glm::vec3(0.0, 0, 0.0));
 	plane.set_program(&texture_shader);
-	plane.add_texture("diff_texture", ground_diff_texture, GL_TEXTURE_2D);
-	
+	//plane.add_texture("diff_texture", ground_diff_texture, GL_TEXTURE_2D);
 	//plane.add_texture("normal_texture", ground_normal_texture, GL_TEXTURE_2D);
 
 
-
-
-	std::string s = shrubby.ApplyAxioms("F", 5); //TODO: This could be done in tree...?
+	std::string s = treeSys1.ApplyAxioms("F", 3); 
 	//std::cout << s << '\n';
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
 	if (tree_diff_texture == 0u) {
 		std::cout << "Couldn't load tree_diff_texture";
 	}
-	Tree tree = Tree(s, shrubby, glm::vec3(0, 0, 0),&texture_shader, bark_uniforms, tree_diff_texture);
+	Tree tree = Tree(s, treeSys1, glm::vec3(10, 0, 10),&texture_shader, bark_uniforms, tree_diff_texture);
+	std::vector<Tree> trees;
 	//circle_rings.set_geometry(shape);
 	//circle_rings.set_program(&normal_shader, set_uniforms);
 	//TRSTransformf& circle_rings_transform_ref = circle_rings.get_transform();
 	//second_branch.set_program(&normal_shader, set_uniforms);
 	
+
+	//
+	// Creating meshes and adding to vector -----------------------------------------------------------------------------------------------------------------------------------------------------
+	//
+
+	std::vector<bonobo::mesh_data> scene_geometry;
+	scene_geometry.push_back(skybox_shape);
+	scene_geometry.push_back(quad);
+
+
+	const int tree_count = 3;
+	const int shrub_count = 2 * tree_count;
+
+
+
+	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
+	sun.material.opacity = 0;
+	sun.name = "Sun";
+
+	scene_geometry.push_back(sun);
+
+	//Code base don https://stackoverflow.com/questions/26086128/generate-different-random-coordinates
+
+	std::mt19937 eng; // using twister engine.
+
+	std::random_device r;
+	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
+	eng.seed(seed); // seed the bit generator, replaces srand()
+
+	auto N = 50; //max distance (coordinate) from center..
+
+	std::uniform_int_distribution<> dist(-N+1 , N - 1); // encapsulates the correct method of turning
+												  // random bits into random numbers in the range
+												  // [0, N)
+
+
+
+	//Create shrubs
+	std::vector<glm::vec3> coordinates_shrubs; //Currently choosing coordinates seperately.. Makes it possible to maybe change trees but keep locations? idk why 
+	for (int i = 0; i < shrub_count; i++) {
+		int x = dist(eng); // the distribution internally used the engine like rand()
+		int y = dist(eng);
+		coordinates_shrubs.push_back(glm::vec3(x, 0, y));
+		
+	}
 	
+	std::string s_shrub = shrubby.ApplyAxioms("F", 5);
+	
+	for (int i = 0; i < shrub_count; i++) {
+		//Tree t = Tree(s_shrub, shrubby, coordinates_shrubs[i], 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_shrub, shrubby, glm::vec3(i*10.0f, 0, i*10.0f), 0u, [](GLuint) {}, tree_diff_texture);
+		trees.push_back(t); //save to a vector for rendering here
+
+		for (auto mesh : t.get_mesh()) {
+			scene_geometry.push_back(mesh);
+			
+		}
+	}
+	//Create larger trees
+	std::vector<glm::vec3> coordinates_trees;
+	for (int i = 0; i < tree_count; i++) {
+		int x = dist(eng); // the distribution internally used the engine like rand()
+		int y = dist(eng);
+		coordinates_trees.push_back(glm::vec3(x, 0, y));
+	}
+
+	std::string s_tree = treeSys1.ApplyAxioms("F", 3);
+	for (int i = 0; i < tree_count; i++) {
+		//Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i *10.0f), 0u, [](GLuint) {}, tree_diff_texture);
+		trees.push_back(t);//save to a vector for rendering here
+
+		for (auto mesh : t.get_mesh()) {
+			scene_geometry.push_back(mesh);
+		}
+	}
+
+	//return scene_geometry; //TODO: Fick inte till att ändra void vi kanske vill ha detta nån annastans?
 
 
+	// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	glClearDepthf(1.0f);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -283,7 +372,8 @@ project::ProjectMain::run()
 	changeCullMode(cull_mode);
 
 	while (!glfwWindowShouldClose(window)) {
-		std::cout << mCamera.mWorld.GetTranslation() << '\n';
+		//Used to find current location
+		//std::cout << mCamera.mWorld.GetTranslation() << '\n';
 		auto const nowTime = std::chrono::high_resolution_clock::now();
 		auto const deltaTimeUs = std::chrono::duration_cast<std::chrono::microseconds>(nowTime - lastTime);
 		lastTime = nowTime;
@@ -333,8 +423,11 @@ project::ProjectMain::run()
 		//circle_rings.render(mCamera.GetWorldToClipMatrix());
 		//second_branch.render(mCamera.GetWorldToClipMatrix());
 		//tree.render(mCamera.GetWorldToClipMatrix());
-		for (size_t i = 0; i < tree.get_children_nb(); i += 1) {
-			tree.get_child(i)->render(mCamera.GetWorldToClipMatrix());
+		for(auto& tree: trees){
+			
+			for (size_t i = 0; i < tree.get_children_nb(); i += 1) {
+				tree.get_child(i)->render(mCamera.GetWorldToClipMatrix());
+			}
 		}
 
 		
