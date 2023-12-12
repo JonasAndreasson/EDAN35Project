@@ -8,5 +8,6 @@ in VS_OUT {
 uniform sampler2D bark;
 out vec4 frag_color;
 void main(){
+	
 	frag_color = texture(bark, fs_in.texcoord);
 }

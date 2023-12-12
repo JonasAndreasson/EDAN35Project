@@ -58,6 +58,8 @@ project::ProjectMain::run()
 			"[" : push position
 			"]" : pop position  TODO:here we can add leaves?
 		*/
+
+		glm::vec3 sun_position = glm::vec3(-62.003f, 11.122f, -78.046f);
 		LSystem fractalSys;
 		fractalSys.AddAxiom('F', "F[-F][+F]");
 		fractalSys.angle = 0.4485496;
@@ -127,40 +129,40 @@ project::ProjectMain::run()
 
 	GLuint diffuse_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Diffuse",
-	                                         { { ShaderType::vertex, "project/diffuse.vert" },
-	                                           { ShaderType::fragment, "project/diffuse.frag" } },
+	                                         { { ShaderType::vertex, "EDAF80/diffuse.vert" },
+	                                           { ShaderType::fragment, "EDAF80/diffuse.frag" } },
 	                                         diffuse_shader);
 	if (diffuse_shader == 0u)
 		LogError("Failed to load diffuse shader");
 
 	GLuint normal_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Normal",
-	                                         { { ShaderType::vertex, "project/normal.vert" },
-	                                           { ShaderType::fragment, "project/normal.frag" } },
+	                                         { { ShaderType::vertex, "EDAF80/normal.vert" },
+	                                           { ShaderType::fragment, "EDAF80/normal.frag" } },
 	                                         normal_shader);
 	if (normal_shader == 0u)
 		LogError("Failed to load normal shader");
 
 	GLuint tangent_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Tangent",
-	                                         { { ShaderType::vertex, "project/tangent.vert" },
-	                                           { ShaderType::fragment, "project/tangent.frag" } },
+	                                         { { ShaderType::vertex, "EDAF80/tangent.vert" },
+	                                           { ShaderType::fragment, "EDAF80/tangent.frag" } },
 	                                         tangent_shader);
 	if (tangent_shader == 0u)
 		LogError("Failed to load tangent shader");
 
 	GLuint binormal_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Bitangent",
-	                                         { { ShaderType::vertex, "project/binormal.vert" },
-	                                           { ShaderType::fragment, "project/binormal.frag" } },
+	                                         { { ShaderType::vertex, "EDAF80/binormal.vert" },
+	                                           { ShaderType::fragment, "EDAF80/binormal.frag" } },
 	                                         binormal_shader);
 	if (binormal_shader == 0u)
 		LogError("Failed to load binormal shader");
 
 	GLuint texcoord_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Texture coords",
-	                                         { { ShaderType::vertex, "project/texcoord.vert" },
-	                                           { ShaderType::fragment, "project/texcoord.frag" } },
+	                                         { { ShaderType::vertex, "EDAF80/texcoord.vert" },
+	                                           { ShaderType::fragment, "EDAF80/texcoord.frag" } },
 	                                         texcoord_shader);
 	if (texcoord_shader == 0u)
 		LogError("Failed to load texcoord shader");
@@ -220,7 +222,7 @@ project::ProjectMain::run()
 	
 	// --- Shaders done 
 
-	auto skybox_shape = parametric_shapes::createSphere(20.0f, 100u, 100u);
+	auto skybox_shape = parametric_shapes::createSphere(100.0f, 100u, 100u,glm::vec3(0.0f));
 	if (skybox_shape.vao == 0u) {
 		LogError("Failed to retrieve the mesh for the skybox");
 		return;
@@ -281,6 +283,7 @@ project::ProjectMain::run()
 	changeCullMode(cull_mode);
 
 	while (!glfwWindowShouldClose(window)) {
+		std::cout << mCamera.mWorld.GetTranslation() << '\n';
 		auto const nowTime = std::chrono::high_resolution_clock::now();
 		auto const deltaTimeUs = std::chrono::duration_cast<std::chrono::microseconds>(nowTime - lastTime);
 		lastTime = nowTime;

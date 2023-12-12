@@ -204,7 +204,7 @@ edan35::Assignment2::run()
 	LSystem shrubby;
 	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
 	shrubby.angle = 0.4485496;
-	shrubby.radius = 5;
+	shrubby.radius = 0.5;
 	shrubby.height = 6;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
