@@ -17,7 +17,8 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 
 
 	float delta_angle = system.angle;
-	float angle = 0;
+	float angle1 = 0;
+	float angle2 = 0;
 
 	float height = system.height;
 	float radius = system.radius;
@@ -28,7 +29,8 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 	//float down_scaling = 0.6f;
 	//float down_scaling_height = 0.8f;
 	glm::vec3 position = start_pos;
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f); //one axis..
+	glm::vec3 rotation2 = glm::vec3(1.0f, 0.0f, 0.0f); //second axis..
 	std::stack<Branch*> stack;
 	Branch *b = nullptr;
 	std::default_random_engine generator;
@@ -41,7 +43,7 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 		case 'F':
 			//make branch
 			
-			b = new Branch(radius, height, position, angle, rotation, down_scaling, b);
+			b = new Branch(radius, height, position, angle1, angle2, rotation, rotation2, down_scaling, b);
 			if (program != 0u) {
 				b->set_program(program, set_uniforms);
 			}
@@ -57,12 +59,17 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			position = b->get_end()+glm::vec3(0,height*0.05,0);
 			b->r = radius;
 			b->h = height;
-			b->a = angle;
+			b->a = angle1;
+			b->a2 = angle2;
 			radius *= down_scaling;
 			height *= down_scaling_height;
 			break;
 		case '-':
-			angle -= delta_angle;
+
+			delta_angle = (float)(glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+
+			angle1 -= delta_angle;
+			angle2 -= delta_angle;
 
 			//angle -= glm::quarter_pi<float>();
 
@@ -70,7 +77,11 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			//std::cout << "Angle:" << angle << '\n';
 			break;
 		case '+':
-			angle += delta_angle;
+
+			delta_angle = (float)(glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+
+			angle1 += delta_angle;
+			angle2 += delta_angle;
 
 			//angle += glm::quarter_pi<float>();
 			
@@ -85,7 +96,8 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			height = b->h;
 			position = b->get_end() + glm::vec3(0, height * 0.05, 0);
 			radius = b->r;
-			angle = b->a;
+			angle1 = b->a;
+			angle2 = b->a2;
 			radius *= down_scaling;
 			height *= down_scaling_height;
 			stack.pop();

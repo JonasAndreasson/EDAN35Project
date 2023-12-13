@@ -743,7 +743,7 @@ parametric_shapes::createBranch(float const radius, float const height, float co
 
 
 bonobo::mesh_data
-parametric_shapes::createBranch(float const radius, float const height,glm::vec3 start_pos,float angle, glm::vec3 rotation,float const prop_loss, const bonobo::mesh_data* parent,
+parametric_shapes::createBranch(float const radius, float const height,glm::vec3 start_pos,float angle1, float angle2, glm::vec3 rotation, glm::vec3 rotation2, float const prop_loss, const bonobo::mesh_data* parent,
 	unsigned int const longitude_split_count,
 	unsigned int const vertical_split_count)
 {
@@ -753,9 +753,10 @@ parametric_shapes::createBranch(float const radius, float const height,glm::vec3
 	auto const circle_slice_vertices_count = circle_slice_edges_count + 1u;
 	auto const vertical_slice_vertices_count = vertical_slice_edges_count + 1u;
 	auto const vertices_nb = circle_slice_vertices_count * vertical_slice_vertices_count;
-	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), angle, rotation);
+	glm::mat4 rot1 = glm::rotate(glm::mat4(1.0f), angle1, rotation);
+	glm::mat4 rot2 = glm::rotate(glm::mat4(1.0f), angle2, rotation2);
 	glm::mat4 trans = glm::translate(glm::mat4(1.0f), start_pos);
-	glm::mat4 model = trans*rot;
+	glm::mat4 model = trans*rot1*rot2;
 	//std::cout << model << '\n';
 	auto vertices = std::vector<glm::vec3>(vertices_nb);
 	auto normals = std::vector<glm::vec3>(vertices_nb);
