@@ -46,6 +46,8 @@ project::ProjectMain::~ProjectMain()
 }
 
 
+
+
 void project::ProjectMain::run()
 {
 
@@ -318,7 +320,7 @@ void project::ProjectMain::run()
 	
 	for (int i = 0; i < shrub_count; i++) {
 		//Tree t = Tree(s_shrub, shrubby, coordinates_shrubs[i], 0u, [](GLuint) {}, tree_diff_texture);
-		Tree t = Tree(s_shrub, shrubby, glm::vec3(i*10.0f, 0, i*10.0f), 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_shrub, shrubby, glm::vec3(i*10.0f, 0, i*10.0f), &texture_shader, bark_uniforms, tree_diff_texture);
 		trees.push_back(t); //save to a vector for rendering here
 
 		for (auto mesh : t.get_mesh()) {
@@ -337,14 +339,13 @@ void project::ProjectMain::run()
 	std::string s_tree = treeSys1.ApplyAxioms("F", 3);
 	for (int i = 0; i < tree_count; i++) {
 		//Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
-		Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i *10.0f), 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i *10.0f), &texture_shader, bark_uniforms, tree_diff_texture);
 		trees.push_back(t);//save to a vector for rendering here
-
 		for (auto mesh : t.get_mesh()) {
 			scene_geometry.push_back(mesh);
 		}
 	}
-
+	
 	//return scene_geometry; //TODO: Fick inte till att ändra void vi kanske vill ha detta nån annastans?
 
 

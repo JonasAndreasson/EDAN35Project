@@ -3,6 +3,7 @@
 #include "core/InputHandler.h"
 #include "core/FPSCamera.h"
 #include "core/WindowManager.hpp"
+#include <core/helpers.hpp>
 
 
 class Window;
@@ -11,6 +12,10 @@ class Window;
 namespace project
 {
 	//! \brief Wrapper class for Assignment 2
+
+	std::vector<bonobo::mesh_data> fetch_mesh(glm::vec3 sun_position);
+
+
 	class ProjectMain {
 	public:
 		//! \brief Default constructor.

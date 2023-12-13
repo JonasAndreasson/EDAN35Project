@@ -24,6 +24,7 @@
 #include <clocale>
 #include <cstdlib>
 #include <stdexcept>
+#include <Project/L-system_Tree/generate_world.hpp>
 
 namespace constant
 {
@@ -192,7 +193,9 @@ void
 edan35::Assignment2::run()
 {
 	// Load the geometry of Sponza
-	auto rw_sponza_geometry = bonobo::loadObjects(config::resources_path("sponza/sponza.obj"));
+	glm::vec3 sun_position = glm::vec3(-62.003f, 11.122f, -78.046f);
+	auto rw_sponza_geometry = gen_world::fetch_mesh(sun_position);
+	//auto rw_sponza_geometry = bonobo::loadObjects(config::resources_path("sponza/sponza.obj"));
 
 	
 	if (rw_sponza_geometry.empty()) {
@@ -208,7 +211,7 @@ edan35::Assignment2::run()
 	shrubby.height = 6;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
-	glm::vec3 sun_position = glm::vec3(0.0f,400.0f, 0.0f);
+	
 	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
 	sun.material.opacity = 0;
 	sun.name = "Sun";

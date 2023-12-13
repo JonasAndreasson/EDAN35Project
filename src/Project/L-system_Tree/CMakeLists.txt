@@ -26,4 +26,10 @@ target_sources (
        PRIVATE [[Tree.cpp]])
 target_link_libraries (L_tree PRIVATE Branch bonobo CG_Labs_options)
 
+add_library (gen_world STATIC)
+target_sources (
+       gen_world
+       PUBLIC [[generate_world.hpp]]
+       PRIVATE [[generate_world.cpp]])
+target_link_libraries (gen_world PRIVATE parametric_tree LSystem Branch L_tree Branch bonobo CG_Labs_options)
 

@@ -8,7 +8,7 @@ target_sources (
 )
 
 
-target_link_libraries (EDAN35_Assignment2 PRIVATE assignment_setup parametric_tree LSystem Branch L_tree)
+target_link_libraries (EDAN35_Assignment2 PRIVATE gen_world assignment_setup parametric_tree LSystem Branch L_tree)
 
 install (TARGETS EDAN35_Assignment2 DESTINATION bin)
 
