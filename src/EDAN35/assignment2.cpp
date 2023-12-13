@@ -430,7 +430,7 @@ edan35::Assignment2::run()
 	auto seconds_nb = 0.0f;
 	std::array<GLuint64, toU(ElapsedTimeQuery::Count)> pass_elapsed_times;
 	auto lastTime = std::chrono::high_resolution_clock::now();
-	bool show_textures = true;
+	bool show_textures = false;
 	bool show_cone_wireframe = false;
 
 	bool show_logs = true;
@@ -531,6 +531,8 @@ edan35::Assignment2::run()
 			{
 				auto const& geometry = sponza_geometry[i];
 				auto const& texture_data = sponza_geometry_texture_data[i];
+				if (geometry.name == "Sky") continue;
+
 				if (geometry.name == "Sun") {
 					glUseProgram(0u);
 					glUseProgram(god_rays_white_shader);
@@ -768,6 +770,7 @@ edan35::Assignment2::run()
 			//
 			// Pass 3: Compute final image using both the g-buffer and  the light accumulation buffer
 			//
+			glm::vec3 projected_sun = normalize(mCamera.GetWorldToClipMatrix()*glm::vec4(sun_position, 1.0));
 			utils::opengl::debug::beginDebugGroup("Resolve");
 			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::Resolve)]);
 
@@ -778,7 +781,8 @@ edan35::Assignment2::run()
 			glUniform2f(glGetUniformLocation(resolve_deferred_shader, "inverse_screen_resolution"),
 				1.0f / static_cast<float>(framebuffer_width),
 				1.0f / static_cast<float>(framebuffer_height));
-			glUniform3fv(glGetUniformLocation(resolve_deferred_shader, "sun_position"), 1,glm::value_ptr(sun_position));
+			glUniform3fv(glGetUniformLocation(resolve_deferred_shader, "sun_position"), 1,glm::value_ptr(projected_sun));
+			
 			bind_texture_with_sampler(GL_TEXTURE_2D, 0, resolve_deferred_shader, "diffuse_texture", textures[toU(Texture::GBufferDiffuse)], samplers[toU(Sampler::Nearest)]);
 			bind_texture_with_sampler(GL_TEXTURE_2D, 1, resolve_deferred_shader, "specular_texture", textures[toU(Texture::GBufferSpecular)], samplers[toU(Sampler::Nearest)]);
 			bind_texture_with_sampler(GL_TEXTURE_2D, 2, resolve_deferred_shader, "light_d_texture", textures[toU(Texture::LightDiffuseContribution)], samplers[toU(Sampler::Nearest)]);

@@ -70,7 +70,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	//skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 	//skybox.set_program(&skybox_shader);
 
-	auto quad = parametric_shapes::createQuad(50, 50, 1000, 1000);
+	auto quad = parametric_shapes::createQuad(scene_radius, scene_radius, 1000, 1000);
 	quad.bindings.emplace("diffuse_texture", ground_diff_texture);
 	quad.bindings.emplace("normal_texture", ground_normal_texture);
 	quad.name = "Ground";
