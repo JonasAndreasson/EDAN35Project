@@ -100,14 +100,13 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	const int shrub_count = 2 * tree_count;
 
 
-
 	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
 	sun.material.opacity = 0;
 	sun.name = "Sun";
 
 	scene_geometry.push_back(sun);
 
-	//Code base don https://stackoverflow.com/questions/26086128/generate-different-random-coordinates
+	//Code based on https://stackoverflow.com/questions/26086128/generate-different-random-coordinates
 
 	std::mt19937 eng; // using twister engine.
 
@@ -137,7 +136,6 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	for (int i = 0; i < shrub_count; i++) {
 		//Tree t = Tree(s_shrub, shrubby, coordinates_shrubs[i], 0u, [](GLuint) {}, tree_diff_texture);
 		Tree t = Tree(s_shrub, shrubby, glm::vec3(i * 10.0f, 0, i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
-		trees.push_back(t); //save to a vector for rendering here
 
 		for (auto mesh : t.get_mesh()) {
 			scene_geometry.push_back(mesh);
@@ -156,7 +154,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	for (int i = 0; i < tree_count; i++) {
 		//Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
 		Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
-		trees.push_back(t);//save to a vector for rendering here
+
 		for (auto mesh : t.get_mesh()) {
 			scene_geometry.push_back(mesh);
 		}
