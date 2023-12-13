@@ -27,7 +27,7 @@ void main()
 	const vec3 ambient = vec3(0.15);
 
 	frag_color =  vec4((ambient + light_d) * diffuse + light_s * specular, 1.0);
-	int NUM_SAMPLES = 100;
+	int NUM_SAMPLES = 1;
 	vec2 tc = texcoords;
 	vec2 deltatexCoord = (tc - (sun_position.xy*0.5 + 0.5));
 	deltatexCoord *= 1.0/ float(NUM_SAMPLES);
