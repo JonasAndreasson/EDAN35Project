@@ -54,14 +54,12 @@ void main()
 	vec3 v = normalize(camera_position - vertex_pos.xyz);
 	vec3 light_to_vertex = vertex_pos.xyz - light_position; //changed this
 	float distance= length(light_to_vertex); //get the distance from light to point
-	float distance_fall_off = 1/(distance*distance); //inverse-square law
-	float vertex_angle = acos(dot(normalize(light_direction), normalize(light_to_vertex))); // [0, pi] //changed this to use normalized vectors instead.
-	float angle = clamp(vertex_angle, 0, light_angle_falloff); //sets angle to [0, light_angle_falloff]
-	float angular_fall_off = smoothstep(light_angle_falloff,0,angle); //[0,1] where 1 is bright, and 0 is none
-	float total_fall_off = 1.0;//light_intensity*distance_fall_off;// * angular_fall_off;
-	light_diffuse_contribution  = vec4(light_color * max(dot(normal,L), 0), 1.0) * total_fall_off;
-	light_specular_contribution = vec4(light_color * pow(max(dot(r,v), 0),32),1.0) * total_fall_off ;
-	
+	float distance_fall_off = 1;///(distance*distance); //inverse-square law
+	light_diffuse_contribution  = vec4(light_color * max(dot(normal,L), 0), 1.0) * distance_fall_off;
+	light_specular_contribution = vec4(light_color * pow(max(dot(r,v), 0),32),1.0) * distance_fall_off;
+	//light_diffuse_contribution.w = 1.0;
+	//light_specular_contribution.w = 1.0;
+	return;
 	//--- SHADOWS ---
 	/*
 	mat4 shadow_projection = lights[light_index].view_projection;
