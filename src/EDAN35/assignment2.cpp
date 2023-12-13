@@ -294,9 +294,6 @@ edan35::Assignment2::run()
 		return;
 	}
 
-
-	
-
 	GLuint fill_gbuffer_shader = 0u;
 	program_manager.CreateAndRegisterProgram("Fill G-Buffer",
 	                                         { { ShaderType::vertex, "EDAN35/fill_gbuffer.vert" },

@@ -72,6 +72,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 	auto quad = parametric_shapes::createQuad(50, 50, 1000, 1000);
 	quad.bindings.emplace("diffuse_texture", ground_diff_texture);
+	quad.bindings.emplace("normal_texture", ground_normal_texture);
 	quad.name = "Ground";
 
 	//Node plane;
@@ -80,6 +81,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 	std::string s = treeSys1.ApplyAxioms("F", 3);
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
+	GLuint tree_normal_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_DISP_4K.jpg"));
 	if (tree_diff_texture == 0u) {
 		std::cout << "Couldn't load tree_diff_texture";
 	}
@@ -134,8 +136,8 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	std::string s_shrub = shrubby.ApplyAxioms("F", 5);
 
 	for (int i = 0; i < shrub_count; i++) {
-		//Tree t = Tree(s_shrub, shrubby, coordinates_shrubs[i], 0u, [](GLuint) {}, tree_diff_texture);
-		Tree t = Tree(s_shrub, shrubby, glm::vec3(i * 10.0f, 0, i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_shrub, shrubby, coordinates_shrubs[i], 0u, [](GLuint) {}, tree_diff_texture);
+		//Tree t = Tree(s_shrub, shrubby, glm::vec3(i * 10.0f, 0, i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
 
 		for (auto mesh : t.get_mesh()) {
 			scene_geometry.push_back(mesh);
@@ -152,8 +154,8 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 	std::string s_tree = treeSys1.ApplyAxioms("F", 3);
 	for (int i = 0; i < tree_count; i++) {
-		//Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
-		Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
+		//Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
 
 		for (auto mesh : t.get_mesh()) {
 			scene_geometry.push_back(mesh);
