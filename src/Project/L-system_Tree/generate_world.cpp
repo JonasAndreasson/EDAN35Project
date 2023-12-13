@@ -72,6 +72,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 	auto quad = parametric_shapes::createQuad(50, 50, 1000, 1000);
 	quad.bindings.emplace("diffuse_texture", ground_diff_texture);
+	quad.bindings.emplace("normal_texture", ground_normal_texture);
 	quad.name = "Ground";
 
 	//Node plane;
@@ -80,6 +81,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 	std::string s = treeSys1.ApplyAxioms("F", 3);
 	GLuint tree_diff_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_COL_4K.jpg"));
+	GLuint tree_normal_texture = bonobo::loadTexture2D(config::resources_path("textures/BarkPoplar001_DISP_4K.jpg"));
 	if (tree_diff_texture == 0u) {
 		std::cout << "Couldn't load tree_diff_texture";
 	}
