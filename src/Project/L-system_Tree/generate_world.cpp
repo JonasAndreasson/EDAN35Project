@@ -27,7 +27,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
 	shrubby.angle = 0.4485496;
 	shrubby.radius = 0.025;
-	shrubby.height = 0.3;
+	shrubby.height = 0.2;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
 
@@ -156,9 +156,9 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 		coordinates_trees.push_back(glm::vec3(x, 0, y));
 	}
 
-	std::string s_tree = treeSys2.ApplyAxioms("F", 3);
+	std::string s_tree = treeSys1.ApplyAxioms("F", 3);
 	for (int i = 0; i < tree_count; i++) {
-		Tree t = Tree(s_tree, treeSys2, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
 		//Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
 
 		for (auto mesh : t.get_mesh()) {
