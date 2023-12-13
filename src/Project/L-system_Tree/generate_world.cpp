@@ -62,20 +62,20 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 	}
 	skybox_shape.bindings.emplace("diffuse_texture", sky_texture);
+	skybox_shape.name = "Sky";
 
 
-
-	Node skybox;
+	//Node skybox;
 	//skybox.set_geometry(skybox_shape);
 	//skybox.add_texture("sky_texture", sky_texture, GL_TEXTURE_2D);
 	//skybox.set_program(&skybox_shader);
 
 	auto quad = parametric_shapes::createQuad(50, 50, 1000, 1000);
 	quad.bindings.emplace("diffuse_texture", ground_diff_texture);
+	quad.name = "Ground";
 
-
-	Node plane;
-	plane.set_geometry(quad);
+	//Node plane;
+	//plane.set_geometry(quad);
 
 
 	std::string s = treeSys1.ApplyAxioms("F", 3);
@@ -101,7 +101,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 
 
 
-	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
+	auto sun = parametric_shapes::createSphere(10.0, 10u, 10u, sun_position);
 	sun.material.opacity = 0;
 	sun.name = "Sun";
 

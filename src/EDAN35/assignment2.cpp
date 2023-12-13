@@ -33,7 +33,7 @@ namespace constant
 
 	constexpr float  scale_lengths       = 100.0f; // The scene is expressed in centimetres rather than metres, hence the x100.
 
-	constexpr size_t lights_nb           = 4;
+	constexpr size_t lights_nb           = 1;
 	constexpr float  light_intensity     = 72.0f * (scale_lengths * scale_lengths);
 	constexpr float  light_angle_falloff = glm::radians(37.0f);
 }
@@ -212,9 +212,7 @@ edan35::Assignment2::run()
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
 	
-	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
-	sun.material.opacity = 0;
-	sun.name = "Sun";
+	
 	std::string s = shrubby.ApplyAxioms("F", 5);
 
 	Tree t = Tree(s, shrubby,glm::vec3(400,0,0),0u,[](GLuint) {},tree_diff_texture);
@@ -224,7 +222,7 @@ edan35::Assignment2::run()
 	for (auto mesh : t.get_mesh()) {
 		rw_sponza_geometry.push_back(mesh);
 	}
-	rw_sponza_geometry.push_back(sun);
+	
 	auto const sponza_geometry = rw_sponza_geometry;
 	std::vector<GeometryTextureData> sponza_geometry_texture_data;
 	sponza_geometry_texture_data.reserve(sponza_geometry.size());
@@ -265,9 +263,9 @@ edan35::Assignment2::run()
 	//
 	// Setup the camera
 	//
-	mCamera.mWorld.SetTranslate(glm::vec3(0.0f, 1.0f, 1.8f) * constant::scale_lengths);
+	mCamera.mWorld.SetTranslate(glm::vec3(0.0f, 1.0f, 1.8f));
 	mCamera.mMouseSensitivity = glm::vec2(0.003f);
-	mCamera.mMovementSpeed = glm::vec3(3.0f) * constant::scale_lengths; // 3 m/s => 10.8 km/h.
+	mCamera.mMovementSpeed = glm::vec3(3.0f); // 3 m/s => 10.8 km/h.
 
 	int framebuffer_width, framebuffer_height;
 	glfwGetFramebufferSize(window, &framebuffer_width, &framebuffer_height);
@@ -650,7 +648,7 @@ edan35::Assignment2::run()
 			glViewport(0, 0, framebuffer_width, framebuffer_height);
 			glClear(GL_COLOR_BUFFER_BIT); //otherwise it will stay Red
 			// XXX: Is any clearing needed?
-			for (size_t i = 0; i < static_cast<size_t>(lights_nb); ++i) {
+			for (size_t i = 0; i < static_cast<size_t>(lights_nb); ++i) { //TODO: FIX THIS SECTION.
 				auto const& lightTransform = lightTransforms[i];
 				auto const light_view_matrix = lightOffsetTransform.GetMatrixInverse() * lightTransform.GetMatrixInverse();
 				auto const light_world_matrix = glm::inverse(light_view_matrix) * coneScaleTransform.GetMatrix();
@@ -665,7 +663,7 @@ edan35::Assignment2::run()
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[toU(FBO::ShadowMap)]);
 				glViewport(0, 0, constant::shadowmap_res_x, constant::shadowmap_res_y);
 				glClear(GL_DEPTH_BUFFER_BIT);
-
+				
 				glUseProgram(fill_shadowmap_shader);
 				glUniform1i(fill_shadowmap_shader_locations.light_index, static_cast<int>(i));
 				glUniform1i(fill_shadowmap_shader_locations.opacity_texture, 0);
@@ -696,7 +694,7 @@ edan35::Assignment2::run()
 				glBindTexture(GL_TEXTURE_2D, 0);
 				glBindVertexArray(0u);
 				glUseProgram(0u);
-
+				
 				glEndQuery(GL_TIME_ELAPSED);
 				utils::opengl::debug::endDebugGroup();
 
@@ -716,15 +714,16 @@ edan35::Assignment2::run()
 				glUseProgram(accumulate_lights_shader);
 				glViewport(0, 0, framebuffer_width, framebuffer_height);
 				// XXX: Is any clearing needed?
-
+				auto const vertex_model_to_world = glm::mat4(1.0f);
+				auto const normal_model_to_world = glm::mat4(1.0f);
 				glUniform1i(accumulate_light_shader_locations.light_index, static_cast<int>(i));
-				glUniformMatrix4fv(accumulate_light_shader_locations.vertex_model_to_world, 1, GL_FALSE, glm::value_ptr(light_world_matrix));
+				glUniformMatrix4fv(accumulate_light_shader_locations.vertex_model_to_world, 1, GL_FALSE, glm::value_ptr(vertex_model_to_world));
 				glUniform3fv(accumulate_light_shader_locations.camera_position, 1, glm::value_ptr(mCamera.mWorld.GetTranslation()));
 				glUniform2f(accumulate_light_shader_locations.inverse_screen_resolution,
 				            1.0f / static_cast<float>(framebuffer_width),
 				            1.0f / static_cast<float>(framebuffer_height));
 				glUniform3fv(accumulate_light_shader_locations.light_color, 1, glm::value_ptr(lightColors[i]));
-				glUniform3fv(accumulate_light_shader_locations.light_position, 1, glm::value_ptr(lightTransform.GetTranslation()));
+				glUniform3fv(accumulate_light_shader_locations.light_position, 1, glm::value_ptr(sun_position));
 				glUniform3fv(accumulate_light_shader_locations.light_direction, 1, glm::value_ptr(lightTransform.GetFront()));
 				glUniform1f(accumulate_light_shader_locations.light_intensity, constant::light_intensity);
 				glUniform1f(accumulate_light_shader_locations.light_angle_falloff, constant::light_angle_falloff);
@@ -852,7 +851,7 @@ edan35::Assignment2::run()
 			bonobo::displayTexture({-0.45f, -0.95f}, {-0.05f, -0.55f}, textures[toU(Texture::GBufferSpecular)],           samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({ 0.05f, -0.95f}, { 0.45f, -0.55f}, textures[toU(Texture::GBufferWorldSpaceNormal)],   samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({ 0.55f, -0.95f}, { 0.95f, -0.55f}, textures[toU(Texture::DepthBuffer)],               samplers[toU(Sampler::Linear)], {0, 0, 0, -1}, glm::uvec2(framebuffer_width, framebuffer_height), true, mCamera.mNear, mCamera.mFar);
-			bonobo::displayTexture({-0.95f,  0.55f}, {-0.55f,  0.95f}, textures[toU(Texture::ShadowMap)],                 samplers[toU(Sampler::Linear)], {0, 0, 0, -1}, glm::uvec2(framebuffer_width, framebuffer_height), true, lightProjectionNearPlane, lightProjectionFarPlane);
+			bonobo::displayTexture({-0.95f,  0.55f}, {-0.55f,  0.95f}, textures[toU(Texture::GBufferDiffuse)],                 samplers[toU(Sampler::Linear)], {0, 0, 0, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({-0.45f,  0.55f}, {-0.05f,  0.95f}, textures[toU(Texture::LightDiffuseContribution)],  samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 			bonobo::displayTexture({ 0.05f,  0.55f}, { 0.45f,  0.95f}, textures[toU(Texture::LightSpecularContribution)], samplers[toU(Sampler::Linear)], {0, 1, 2, -1}, glm::uvec2(framebuffer_width, framebuffer_height));
 		}
