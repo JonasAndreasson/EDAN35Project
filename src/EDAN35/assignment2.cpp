@@ -424,7 +424,7 @@ edan35::Assignment2::run()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClearDepthf(1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbos[toU(FBO::Resolve)]);
@@ -699,7 +699,7 @@ edan35::Assignment2::run()
 				utils::opengl::debug::endDebugGroup();
 
 
-				glCullFace(GL_FRONT);
+				//glCullFace(GL_FRONT);
 				glEnable(GL_BLEND);
 				glDepthFunc(GL_GREATER);
 				glDepthMask(GL_FALSE);
@@ -764,7 +764,7 @@ edan35::Assignment2::run()
 				glDepthMask(GL_TRUE);
 				glDepthFunc(GL_LESS);
 				glDisable(GL_BLEND);
-				glCullFace(GL_BACK);
+				//glCullFace(GL_BACK);
 			}
 
 
@@ -813,7 +813,7 @@ edan35::Assignment2::run()
 		if (show_cone_wireframe) {
 			utils::opengl::debug::beginDebugGroup("Draw cone wireframe");
 
-			glDisable(GL_CULL_FACE);
+			//glDisable(GL_CULL_FACE);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			for (size_t i = 0; i < lights_nb; ++i) {
 				cone.render(view_projection,
@@ -821,7 +821,7 @@ edan35::Assignment2::run()
 				            render_light_cones_shader, set_uniforms);
 			}
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glEnable(GL_CULL_FACE);
+			//glEnable(GL_CULL_FACE);
 			utils::opengl::debug::endDebugGroup();
 		}
 		glEndQuery(GL_TIME_ELAPSED);

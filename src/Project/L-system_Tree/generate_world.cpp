@@ -100,7 +100,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	const int shrub_count = 2 * tree_count;
 
 
-	auto sun = parametric_shapes::createSphere(100.0, 10u, 10u, sun_position);
+	auto sun = parametric_shapes::createSphere(10.0, 10u, 10u, sun_position);
 	sun.material.opacity = 0;
 	sun.name = "Sun";
 
