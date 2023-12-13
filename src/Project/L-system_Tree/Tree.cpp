@@ -7,7 +7,7 @@
 #include <random>
 #include "LSystem.hpp"
 
-Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
+Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos, const GLuint* program, const std::function<void(GLuint)>& set_uniforms, const GLuint texture) :Node()
 
 {	//Generate Tree using L-system -> generator
 	//Empty until figured out if we want String or L-System-obj as param.
@@ -32,31 +32,31 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f); //one axis..
 	glm::vec3 rotation2 = glm::vec3(1.0f, 0.0f, 0.0f); //second axis..
 	std::stack<Branch*> stack;
-	Branch *b = nullptr;
+	Branch* b = nullptr;
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> distribution(1, 3);
 	auto randAngle = std::bind(distribution, generator);
-
+	float rand_angle = 0;
 	for (auto c : s) {
 
 		switch (c) {
 		case 'F':
 			//make branch
-			
+
 			b = new Branch(radius, height, position, angle1, angle2, rotation, rotation2, down_scaling, b);
 			if (program != 0u) {
 				b->set_program(program, set_uniforms);
 			}
 			if (texture != 0u) {
-			b->add_texture("diffuse_texture", texture, GL_TEXTURE_2D);
-			bool could_insert = b->get_mesh().bindings.emplace("diffuse_texture", texture).second;
+				b->add_texture("diffuse_texture", texture, GL_TEXTURE_2D);
+				bool could_insert = b->get_mesh().bindings.emplace("diffuse_texture", texture).second;
 			}
 			else {
 				std::cout << "Texture not found (Was not intialized)" << '\n';
 			}
 			meshes.push_back(b->get_mesh());
 			add_child(b);
-			position = b->get_end()+glm::vec3(0,height*0.05,0);
+			position = b->get_end() + glm::vec3(0, height * 0.05, 0);
 			b->r = radius;
 			b->h = height;
 			b->a = angle1;
@@ -66,10 +66,10 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			break;
 		case '-':
 
-			delta_angle = (float)(glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+			rand_angle = (float)(glm::quarter_pi<float>() / 4 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 
 			angle1 -= delta_angle;
-			angle2 -= delta_angle;
+			//angle2 -= rand_angle;
 
 			//angle -= glm::quarter_pi<float>();
 
@@ -78,18 +78,18 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			break;
 		case '+':
 
-			delta_angle = (float)(glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
+			rand_angle = (float)(glm::quarter_pi<float>() / 4 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 
 			angle1 += delta_angle;
-			angle2 += delta_angle;
+			//angle2 += rand_angle;
 
 			//angle += glm::quarter_pi<float>();
-			
+
 			//angle += (float) (glm::quarter_pi<float>() / 2 * distribution(generator)); //pi/8 + rand 45deg gives range pi/8- 3pi/8
 			break;
 		case '[':
 			stack.push(b);
-				break;
+			break;
 		case ']':
 			//Branch done, here we can add leaves before jumping back to branch on stack
 			b = stack.top();
@@ -101,7 +101,7 @@ Tree::Tree(const std::string s, LSystem system, const glm::vec3 start_pos ,const
 			radius *= down_scaling;
 			height *= down_scaling_height;
 			stack.pop();
-				continue;
+			continue;
 		default:
 			break;
 
