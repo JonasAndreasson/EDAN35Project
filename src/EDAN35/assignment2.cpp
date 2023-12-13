@@ -256,7 +256,7 @@ edan35::Assignment2::run()
 		sponza_geometry_texture_data.emplace_back(std::move(data));
 	}
 
-	auto const cone_geometry = loadCone();
+	auto const cone_geometry = parametric_shapes::createSphere(1000.0f, 100u, 100u, sun_position);//loadCone();
 	Node cone;
 	cone.set_geometry(cone_geometry);
 
@@ -517,10 +517,8 @@ edan35::Assignment2::run()
 
 
 		if (!shader_reload_failed) {
-			//
-			// Pass 1: Render scene into the g-buffer
-			//
-						//Pass Generate the godrays
+
+				//Pass Generate the godrays
 
 			utils::opengl::debug::beginDebugGroup("Create God Ray Texture");
 			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::GodRays)]);
@@ -567,7 +565,9 @@ edan35::Assignment2::run()
 
 
 
-
+			//
+			// Pass 1: Render scene into the g-buffer
+			//
 
 			utils::opengl::debug::beginDebugGroup("Fill G-buffer");
 			glBeginQuery(GL_TIME_ELAPSED, elapsed_time_queries[toU(ElapsedTimeQuery::GbufferGeneration)]);
@@ -668,13 +668,13 @@ edan35::Assignment2::run()
 				{
 					auto const& geometry = sponza_geometry[i];
 					auto const& texture_data = sponza_geometry_texture_data[i];
-
+					if (geometry.name == "Sun") continue;
 					utils::opengl::debug::beginDebugGroup(geometry.name);
 
 					auto const vertex_model_to_world = glm::mat4(1.0f);
 					glUniformMatrix4fv(fill_shadowmap_shader_locations.vertex_model_to_world, 1, GL_FALSE, glm::value_ptr(vertex_model_to_world));
 
-					glUniform1i(fill_shadowmap_shader_locations.has_opacity_texture, texture_data.opacity_texture_id != 0u ? 1 : 0);
+					glUniform1i(fill_shadowmap_shader_locations.has_opacity_texture, geometry.material.opacity == 0 ? 1 : 0);
 					glBindSampler(0u, texture_data.opacity_texture_id != 0u ? samplers[toU(Sampler::Mipmaps)] : samplers[toU(Sampler::Nearest)]);
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, texture_data.opacity_texture_id != 0u ? texture_data.opacity_texture_id : debug_texture_id);
@@ -720,7 +720,7 @@ edan35::Assignment2::run()
 				            1.0f / static_cast<float>(framebuffer_width),
 				            1.0f / static_cast<float>(framebuffer_height));
 				glUniform3fv(accumulate_light_shader_locations.light_color, 1, glm::value_ptr(lightColors[i]));
-				glUniform3fv(accumulate_light_shader_locations.light_position, 1, glm::value_ptr(sun_position));
+				glUniform3fv(accumulate_light_shader_locations.light_position, 1, glm::value_ptr(sun_position+glm::vec3(1,0,1)));
 				glUniform3fv(accumulate_light_shader_locations.light_direction, 1, glm::value_ptr(lightTransform.GetFront()));
 				glUniform1f(accumulate_light_shader_locations.light_intensity, constant::light_intensity);
 				glUniform1f(accumulate_light_shader_locations.light_angle_falloff, constant::light_angle_falloff);
@@ -747,7 +747,7 @@ edan35::Assignment2::run()
 
 				
 				glBindVertexArray(cone_geometry.vao);
-				glDrawArrays(cone_geometry.drawing_mode, 0, cone_geometry.vertices_nb);
+				glDrawElements(cone_geometry.drawing_mode, cone_geometry.indices_nb, GL_UNSIGNED_INT, reinterpret_cast<GLvoid const*>(0x0)); //glDrawArrays(cone_geometry.drawing_mode, 0, cone_geometry.vertices_nb);
 
 				glBindVertexArray(0u);
 				glUseProgram(0u);

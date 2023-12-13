@@ -9,6 +9,9 @@ in VS_OUT {
 
 void main()
 {
+	if(has_opacity_texture)
+		discard;
 	if (has_opacity_texture && texture(opacity_texture, fs_in.texcoord).r < 1.0)
 		discard;
+	
 }
