@@ -68,7 +68,7 @@ namespace parametric_shapes
 		unsigned int const longitude_split_count = 10u,
 		unsigned int const vertical_split_count = 4u);
 
-	bonobo::mesh_data createBranch(float const radius, float const height, glm::vec3 start_pos,float const angle, const glm::vec3 rotation, float const prop_loss = 0.5f, const bonobo::mesh_data* parent = nullptr,
+	bonobo::mesh_data createBranch(float const radius, float const height, glm::vec3 start_pos, float const angle1, float const angle2, const glm::vec3 rotation, const glm::vec3 rotation2, float const prop_loss = 0.5f, const bonobo::mesh_data* parent = nullptr,
 		unsigned int const longitude_split_count = 10u,
 		unsigned int const vertical_split_count = 4u);
 
