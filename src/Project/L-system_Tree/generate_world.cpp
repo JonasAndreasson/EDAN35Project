@@ -26,19 +26,23 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	LSystem shrubby;
 	shrubby.AddAxiom('F', "F[+F]F[-F][F]");
 	shrubby.angle = 0.4485496;
-	shrubby.radius = 0.005;
-	shrubby.height = 0.06;
+	shrubby.radius = 0.025;
+	shrubby.height = 0.3;
 	shrubby.down_scaling = 0.9;
 	shrubby.down_scaling_height = 0.9;
 
 	LSystem treeSys1;
 	treeSys1.AddAxiom('F', "F-[-F+F+F]+[+F-F-F]");
 	treeSys1.angle = 0.3926991;
+	treeSys1.radius = 0.25;
+	treeSys1.height = 1;
 	//using default values
 
 	LSystem treeSys2;
 	treeSys2.AddAxiom('F', "F[-F+F+F][+F-F-F]");
 	treeSys2.angle = 0.3926991;
+	treeSys2.radius = 0.25;
+	treeSys2.height = 1;
 	//using default values
 
 
@@ -98,7 +102,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	scene_geometry.push_back(quad);
 
 
-	const int tree_count = 3;
+	const int tree_count = 10;
 	const int shrub_count = 2 * tree_count;
 
 
@@ -116,7 +120,7 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
 	eng.seed(seed); // seed the bit generator, replaces srand()
 
-	auto N = scene_radius/2; //max distance (coordinate) from center..
+	auto N = scene_radius/4; //max distance (coordinate) from center..
 
 	std::uniform_int_distribution<> dist(-N + 1, N - 1); // encapsulates the correct method of turning
 	// random bits into random numbers in the range
@@ -152,9 +156,9 @@ std::vector<bonobo::mesh_data> gen_world::fetch_mesh(glm::vec3 sun_position) {
 		coordinates_trees.push_back(glm::vec3(x, 0, y));
 	}
 
-	std::string s_tree = treeSys1.ApplyAxioms("F", 3);
+	std::string s_tree = treeSys2.ApplyAxioms("F", 3);
 	for (int i = 0; i < tree_count; i++) {
-		Tree t = Tree(s_tree, treeSys1, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
+		Tree t = Tree(s_tree, treeSys2, coordinates_trees[i], 0u, [](GLuint) {}, tree_diff_texture);
 		//Tree t = Tree(s_tree, treeSys1, glm::vec3(3 + i * 10.0f, 0, 3 + i * 10.0f), 0u, [](GLuint) {}, tree_diff_texture);
 
 		for (auto mesh : t.get_mesh()) {
