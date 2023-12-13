@@ -39,7 +39,9 @@ void main()
 
 	// Worldspace normal
 	//geometry_normal.xyz = vec3(0.0);
+	if (gl_FrontFacing){
 	geometry_normal = vec4((fs_in.normal+1)/2, 1.0);
-	if (!gl_FrontFacing)
+	} else {
 	geometry_normal = vec4((-fs_in.normal+1)/2, 1.0);
+	}
 }
